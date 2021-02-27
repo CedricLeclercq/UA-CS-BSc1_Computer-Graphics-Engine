@@ -55,6 +55,8 @@ img::EasyImage draw2DLines (img::EasyImage& image, const Lines2D &lines, const i
     double dcX = scalingFactorD*(xMin+xMax)/2;
     double dcY = scalingFactorD*(yMin+yMax)/2;
 
+
+    // TODO for debugging
     cout << endl << endl;
     cout << "Values:" << endl;
     cout << endl << "xMin = " << xMin;
@@ -76,13 +78,10 @@ img::EasyImage draw2DLines (img::EasyImage& image, const Lines2D &lines, const i
 
         // Before actually drawing, apply the scaling factor d ...
         // ... and fixing the middle point of the image
-        line.p1.x = line.p1.x * scalingFactorD + imageX / 2 - dcX; // TODO should these all be rounded to int?
+        line.p1.x = line.p1.x * scalingFactorD + imageX / 2 - dcX;
         line.p1.y = line.p1.y * scalingFactorD + imageY / 2 - dcY;
         line.p2.x = line.p2.x * scalingFactorD + imageX / 2 - dcX;
         line.p2.y = line.p2.y * scalingFactorD + imageY / 2 - dcY;
-
-        cout << line.p1.x << "; " << line.p1.y << "; " << line.p2.x << "; " << line.p2.y << endl; //TODO test code
-
 
         image.draw_line(line.p1.x,line.p1.y,line.p2.x,line.p2.y,img::Color(line.color.red,line.color.green,line.color.blue));
     }
@@ -146,11 +145,6 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
         }
     }
     image = draw2DLines(image,lines,size);
-    //for (int i = 0; i < size; i++) { // TODO debugging remove before submission
-        //for (int j = 0; j < size; j++) {
-            //cout << image(i,j).blue << endl;
-        //}
-    //}
     return image;
 }
 
@@ -170,14 +164,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         image = LSystem2D(lSystem2D,backgroundColor, size, color);
 
 
-    } //else img::EasyImage image1(configuration["ImageProperties"]["width"].as_int_or_die(), configuration["ImageProperties"]["height"].as_int_or_die());
-    // First drawing the background
-    //for (int i = 0; i < 1000; i++) {
-        //for (int j = 0; j < 1000; j++) {
-            //image(i,j).red = 1;
-            //image(i,j).green = 1;
-            //image(i,j).blue = 1;
-        //}
+    }
 
 	return image;
 }
