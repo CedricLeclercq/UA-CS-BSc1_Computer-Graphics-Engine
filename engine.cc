@@ -10,83 +10,14 @@
 #include <string>
 #include <list>
 #include <cmath>
+#include <utility>
 using namespace std;
 using Lines2D = std::list<Line2D>;
 
 
 inline int roundToInt(double d) { return static_cast<int>(round(d)); }
 
-img::EasyImage draw2DLines (img::EasyImage& image, const Lines2D &lines, const int size) {
 
-    //Finding xMin, xMax, yMin, yMax
-    double xMin = size;
-    double xMax = 0;
-    double yMin = size;
-    double yMax = 0;
-
-    for (auto line: lines) {
-        // First point
-        if (line.p1.x < xMin) { xMin = line.p1.x; }
-        if (line.p1.x > xMax) { xMax = line.p1.x; }
-        if (line.p1.y < yMin) { yMin = line.p1.y; }
-        if (line.p1.y > yMax) { yMax = line.p1.y; }
-
-        // Second point
-        if (line.p2.x < xMin) { xMin = line.p2.x; }
-        if (line.p2.x > xMax) { xMax = line.p2.x; }
-        if (line.p2.y < yMin) { yMin = line.p2.y; }
-        if (line.p2.y > yMax) { yMax = line.p2.y; }
-    }
-
-    cout << endl << xMin << " " << xMax << " " << yMin << " " << yMax << endl << endl;
-
-    // Defining xRange and yRange
-    double xRange = xMax - xMin;
-    double yRange = yMax - yMin;
-
-    // Scaling for the size
-    double imageX = size*(xRange/max(xRange,yRange));
-    double imageY = size*(yRange/max(xRange,yRange));
-
-    // Defining scaling factor d
-    double scalingFactorD = 0.95*(imageX/xRange);
-
-    // Defining dcX and dcY
-    double dcX = scalingFactorD*(xMin+xMax)/2;
-    double dcY = scalingFactorD*(yMin+yMax)/2;
-
-
-    // TODO for debugging
-    cout << endl << endl;
-    cout << "Values:" << endl;
-    cout << endl << "xMin = " << xMin;
-    cout << endl << "xMax = " << xMax;
-    cout << endl << "yMin = " << yMin;
-    cout << endl << "yMax = " << yMax;
-    cout << endl << endl << endl;
-
-    cout << endl << "xRange = " << xRange;
-    cout << endl << "yRange = " << yRange;
-    cout << endl << "imageX = " << imageX;
-    cout << endl << "imageY = " << imageY;
-    cout << endl << "scaling factor d = " << scalingFactorD;
-    cout << endl << "dcX = " << dcX;
-    cout << endl << "dcY = " << dcY;
-    cout << endl << endl << endl;
-
-    for (auto line: lines) {
-
-        // Before actually drawing, apply the scaling factor d ...
-        // ... and fixing the middle point of the image
-        line.p1.x = line.p1.x * scalingFactorD + imageX / 2 - dcX;
-        line.p1.y = line.p1.y * scalingFactorD + imageY / 2 - dcY;
-        line.p2.x = line.p2.x * scalingFactorD + imageX / 2 - dcX;
-        line.p2.y = line.p2.y * scalingFactorD + imageY / 2 - dcY;
-
-        image.draw_line(line.p1.x,line.p1.y,line.p2.x,line.p2.y,img::Color(line.color.red,line.color.green,line.color.blue));
-    }
-    return image;
-}
 
 LParser::LSystem2D createLSystem2D(const string& inputfile) {
 
@@ -95,6 +26,41 @@ LParser::LSystem2D createLSystem2D(const string& inputfile) {
     input_stream >> l_system;
     input_stream.close();
     return l_system;
+}
+
+string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator, unsigned int nrOfIterations) {
+
+    string result;
+
+    for (char k: initiator) {
+        if (k != '-' and k != '+') {
+            if (nrOfIterations != 0) {
+                const string& newString = sys.get_replacement(k);
+                result += newString;
+            }
+        } else if (k == '-') { result += '-';} else { result += '+'; }
+    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl; if (nrOfIterations != 0) {
+        result = recursiveInitiator(sys,result,nrOfIterations);
+    }
+
+    return result;
+    /*
+    // Basis, if this is true, continue recursive
+    for (char k: initiator) {
+
+        if (k == '+' ) { result += '+'; }
+        else if (k == '-' ) { result += '-'; }
+
+        else if (nrOfIterations != 0) {
+            nrOfIterations -= 1;
+            string iteration = recursiveInitiator(sys,sys.get_replacement(k),nrOfIterations);
+            result += iteration;
+        } result += initiator;
+        //nrOfIterations = sys.get_nr_iterations();
+    }
+
+    return result;
+    */
 }
 
 img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
@@ -115,10 +81,17 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
     // Then creating a Lines2D object to draw later
     Lines2D lines;
 
+    //cout << endl << initiator[0] << endl;
+    string test = sys.get_replacement(initiator[0]);
+
+    //cout << endl << recursiveInitiator(sys,test,sys.get_nr_iterations()) << endl;
+    string testd = recursiveInitiator(sys,test,sys.get_nr_iterations()-1);
+    //string testd = "XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-X";
+    cout << testd;
     double currentX = 0;
     double currentY = 0;
     // Looping over the initiator and seeing what to do
-    for (char letter: initiator) {
+    for (char letter: testd) {
 
         if (letter == '+') {
             currentAngle += sys.get_angle() * M_PI / 180;
@@ -129,7 +102,7 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
         //if ( letter == '+' || letter == '-' ) { cout << 1;
         } else {
             Line2D line{};
-            bool lengthDraw = sys.draw('F');
+            bool lengthDraw = sys.draw(letter);
             if (lengthDraw) {
                 line.p1.x = currentX;
                 line.p1.y = currentY;
@@ -144,7 +117,7 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
             }
         }
     }
-    image = draw2DLines(image,lines,size);
+    image.draw2DLines(lines,size);
     return image;
 }
 

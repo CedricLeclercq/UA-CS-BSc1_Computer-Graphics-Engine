@@ -23,6 +23,12 @@ vector
 -
 iostream
 -
+cmath
+-
+list
+-
+Line2D.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Line2D.h
 
 /Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine.cc
 easy_image.h
@@ -46,6 +52,8 @@ string
 list
 -
 cmath
+-
+utility
 -
 
 /Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/ini_configuration.h

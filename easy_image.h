@@ -20,6 +20,12 @@
 #include <stdint.h>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <list>
+#include "Line2D.h"
+
+using namespace std;
+using Lines2D = std::list<Line2D>;
 /**
  * \brief The namespace of the EasyImage class
  */
@@ -151,6 +157,8 @@ namespace img
 			 * \brief Destructor
 			 */
 			virtual ~EasyImage();
+
+        void draw2DLines (const Lines2D &lines, const int size);
 
 			/**
 			 * \brief Assignment operator. Allows an easyImage to be assigned to another easyImage
