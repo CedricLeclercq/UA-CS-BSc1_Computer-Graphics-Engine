@@ -1,0 +1,7 @@
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/install/local.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/install/strip.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/install.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/list_install_components.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/cmake-build-debug/CMakeFiles/engine.dir

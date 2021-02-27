@@ -1,0 +1,70 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Color.h
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Line2D.h
+Point2D.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Point2D.h
+Color.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Color.h
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Point2D.h
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/easy_image.h
+stdint.h
+-
+vector
+-
+iostream
+-
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine.cc
+easy_image.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/easy_image.h
+ini_configuration.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/ini_configuration.h
+Line2D.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/Line2D.h
+l_parser.h
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/l_parser.h
+fstream
+-
+iostream
+-
+stdexcept
+-
+string
+-
+list
+-
+cmath
+-
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/ini_configuration.h
+iostream
+-
+map
+-
+stdexcept
+-
+string
+-
+vector
+-
+
+/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/l_parser.h
+map
+-
+string
+-
+set
+-
+exception
+-
+
