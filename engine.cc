@@ -136,6 +136,8 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
                 line.p1.y = currentY;
                 line.p2.x = currentX + cos(currentAngle);
                 line.p2.y = currentY + sin(currentAngle);
+                currentX = line.p2.x;
+                currentY = line.p2.y;
                 line.color.red = roundToInt(255 * lineColor[0]);
                 line.color.green = roundToInt(255 * lineColor[1]);
                 line.color.blue = roundToInt(255 * lineColor[2]);
