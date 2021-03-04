@@ -11,6 +11,7 @@
 #include <list>
 #include <cmath>
 #include <utility>
+#include <stack>
 using namespace std;
 using Lines2D = std::list<Line2D>;
 
@@ -33,34 +34,22 @@ string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator
     string result;
 
     for (char k: initiator) {
-        if (k != '-' and k != '+') {
+        if (k != '-' and k != '+' and k != '(' and k != ')') {
             if (nrOfIterations != 0) {
                 const string& newString = sys.get_replacement(k);
                 result += newString;
             }
-        } else if (k == '-') { result += '-';} else { result += '+'; }
-    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl; if (nrOfIterations != 0) {
+        } else if (k == '-') { result += '-';}
+          else if (k == '+') { result += '+';}
+          else if (k == '(') { result += '(';}
+          else { result += ')';}
+    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl;
+
+    if (nrOfIterations != 0) {
         result = recursiveInitiator(sys,result,nrOfIterations);
     }
 
     return result;
-    /*
-    // Basis, if this is true, continue recursive
-    for (char k: initiator) {
-
-        if (k == '+' ) { result += '+'; }
-        else if (k == '-' ) { result += '-'; }
-
-        else if (nrOfIterations != 0) {
-            nrOfIterations -= 1;
-            string iteration = recursiveInitiator(sys,sys.get_replacement(k),nrOfIterations);
-            result += iteration;
-        } result += initiator;
-        //nrOfIterations = sys.get_nr_iterations();
-    }
-
-    return result;
-    */
 }
 
 img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
@@ -82,19 +71,28 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
     Lines2D lines;
 
     //cout << endl << initiator[0] << endl;
-    string test = sys.get_replacement(initiator[0]);
+    //string test = sys.get_replacement(initiator[0]);
 
     //cout << endl << recursiveInitiator(sys,test,sys.get_nr_iterations()) << endl;
-    string testd = recursiveInitiator(sys,test,sys.get_nr_iterations()-1);
-    //string testd = "XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF+F+XF-F+F-XF-F+F-XF-F+F-XF+F+XF-F+F-X";
-    cout << testd;
+    string fullString = recursiveInitiator(sys,initiator,sys.get_nr_iterations());
+    cout << fullString << endl;
     double currentX = 0;
     double currentY = 0;
-    // Looping over the initiator and seeing what to do
-    for (char letter: testd) {
+    stack<pair<pair<double,double>,double>> stack; // ((x,y),angle)
 
-        if (letter == '+') {
-            currentAngle += sys.get_angle() * M_PI / 180;
+    // Looping over the initiator and seeing what to do
+    for (char letter: fullString) {
+
+        if (letter == '(') {
+            stack.push(make_pair(make_pair(currentX,currentY),currentAngle));
+        } else if (letter == ')') {
+            currentX = stack.top().first.first;
+            currentY = stack.top().first.second;
+            currentAngle = stack.top().second;
+            stack.pop();
+
+        } else if (letter == '+') {
+                currentAngle += sys.get_angle() * M_PI / 180;
 
         } else if (letter == '-') {
             currentAngle -= sys.get_angle() * M_PI / 180;

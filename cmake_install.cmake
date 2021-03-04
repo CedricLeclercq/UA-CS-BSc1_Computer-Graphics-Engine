@@ -1,4 +1,4 @@
-# Install script for directory: /Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils
+# Install script for directory: /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -39,18 +39,18 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine")
+   "/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils" TYPE EXECUTABLE FILES "/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine")
-  if(EXISTS "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine")
+file(INSTALL DESTINATION "/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils" TYPE EXECUTABLE FILES "/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine")
+  if(EXISTS "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/engine")
+      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine")
     endif()
   endif()
 endif()
@@ -63,5 +63,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/cedricleclercq/Desktop/School/2020-2021/cg/2. Taak 1/utils/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
