@@ -53,7 +53,7 @@ string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator
 }
 
 img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
-    double currentAngle = sys.get_starting_angle();
+    double currentAngle = sys.get_starting_angle() * M_PI / 180;
     const set<char>& alphabet = sys.get_alphabet();
     const string& initiator = sys.get_initiator();
     img::EasyImage image(size,size);

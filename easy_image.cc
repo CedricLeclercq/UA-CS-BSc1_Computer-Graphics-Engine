@@ -433,10 +433,10 @@ void img::EasyImage::draw2DLines (const Lines2D &lines, const int size) {
     // Scaling for the size
     double imageX = size*(xRange/max(xRange,yRange));
     double imageY = size*(yRange/max(xRange,yRange));
-    //this->height = roundToInt(imageY);
-    //this->width = roundToInt(imageX);
-    this->height = size;
-    this->width = size;
+    this->height = roundToInt(imageY);
+    this->width = roundToInt(imageX);
+    //this->height = size;
+    //this->width = size;
 
     // Defining scaling factor d
     double scalingFactorD = 0.95*(imageX/xRange);
