@@ -9,6 +9,7 @@
 class Color {
 public:
     double red,green,blue;
+
 };
 
 

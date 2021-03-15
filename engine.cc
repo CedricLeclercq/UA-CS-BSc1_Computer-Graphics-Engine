@@ -3,6 +3,8 @@
 #include "Line2D.h"
 #include "l_parser.h"
 #include "l_parser.cc"
+#include "Figure.h"
+#include "wireframe.h"
 
 #include <fstream>
 #include <iostream>
@@ -18,8 +20,6 @@ using Lines2D = std::list<Line2D>;
 
 inline int roundToInt(double d) { return static_cast<int>(round(d)); }
 
-
-
 LParser::LSystem2D createLSystem2D(const string& inputfile) {
 
     LParser::LSystem2D l_system;
@@ -27,6 +27,214 @@ LParser::LSystem2D createLSystem2D(const string& inputfile) {
     input_stream >> l_system;
     input_stream.close();
     return l_system;
+}
+
+LParser::LSystem3D createLSystem3D(const string& inputfile) {
+
+    LParser::LSystem3D l_system;
+    ifstream input_stream(inputfile);
+    input_stream >> l_system;
+    input_stream.close();
+    return l_system;
+}
+
+Matrix scalefigure(const double scale) {
+    /**
+     * @pre figuur moet rond (0,0,0) gecentreerd zijn!
+     *
+     */
+
+    Matrix matrix;
+    matrix(1,1) = scale;
+    matrix(2,2) = scale;
+    matrix(3,3) = scale;
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+Matrix rotateX(const double angle) {
+
+    Matrix matrix;
+    matrix(1,1) = 1;
+    matrix(2,2) = cos(angle);
+    matrix(2,3) = sin(angle);
+    matrix(3,2) = -sin(angle);
+    matrix(3,3) = cos (angle);
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+Matrix rotateY(const double angle) {
+
+    Matrix matrix;
+    matrix(1,1) = cos(angle);
+    matrix(1,3) = -sin(angle);
+    matrix(2,2) = 1;
+    matrix(3,0) = sin(angle);
+    matrix(3,3) = cos(angle);
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+Matrix rotateZ(const double angle) {
+
+    Matrix matrix;
+
+    matrix(1,1) = cos(angle);
+    matrix(1,2) = sin(angle);
+    matrix(2,1) = -sin(angle);
+    matrix(2,2) = cos(angle);
+    matrix(3,3) = 1;
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+Matrix translate(const Vector3D &vector) {
+
+    Matrix matrix;
+
+    matrix(1,1) = 1;
+    matrix(2,2) = 1;
+    matrix(3,3) = 1;
+    matrix(4,1) = vector.x;
+    matrix(4,2) = vector.y;
+    matrix(4,3) = vector.z;
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+void applyTransformation(Figure & figure, const Matrix & matrix) {
+    for (auto & point: figure.points) {
+        point = point * matrix;
+    }
+}
+
+void toPolar(const Vector3D &point, double &theta, double &phi, double &r) {
+
+    // r
+    r = sqrt((pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2)));
+
+    // theta
+    theta = atan2(point.y, point.x);
+
+    // phi
+    phi = acos(r);
+}
+
+Matrix eyePointTrans(const Vector3D &eyepoint) {
+
+    // Declaring the matrix
+    Matrix matrix;
+
+    // Declaring the polar coordinates
+    double theta, phi, r;
+
+    // Initialising theta, phi and r
+    toPolar(eyepoint,theta,phi,r);
+
+    // Creating the eye point transformation matrix
+    matrix(1,1) = -sin(theta);
+    matrix(1,2) = -cos(theta) * cos(phi);
+    matrix(1,3) = cos(theta) * sin (phi);
+    matrix(2,1) = cos(theta);
+    matrix(2,2) = -sin(theta) * cos(phi);
+    matrix(2,3) = sin(theta) * sin (phi);
+    matrix(3,2) = sin(phi);
+    matrix(3,3) = cos(phi);
+    matrix(4,3) = -r;
+    matrix(4,4) = 1;
+
+    return matrix;
+}
+
+Point2D doProjection(const Vector3D &point, const double d) {
+
+    Point2D point2D; // TODO | does this work?
+    point2D.x = ((d*point.x)/-point.z);
+    point2D.y = ((d*point.y)/-point.z);
+
+    return point2D;
+}
+
+img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<double>& backgroundColor) {
+
+    //Finding xMin, xMax, yMin, yMax
+    double xMin = size;
+    double xMax = 0;
+    double yMin = size;
+    double yMax = 0;
+
+    for (auto line: lines) {
+
+        // First point
+        if (line.p1.x < xMin) { xMin = line.p1.x; }
+        if (line.p1.x > xMax) { xMax = line.p1.x; }
+        if (line.p1.y < yMin) { yMin = line.p1.y; }
+        if (line.p1.y > yMax) { yMax = line.p1.y; }
+
+        // Second point
+        if (line.p2.x < xMin) { xMin = line.p2.x; }
+        if (line.p2.x > xMax) { xMax = line.p2.x; }
+        if (line.p2.y < yMin) { yMin = line.p2.y; }
+        if (line.p2.y > yMax) { yMax = line.p2.y; }
+    }
+
+    cout << endl << xMin << " " << xMax << " " << yMin << " " << yMax << endl << endl;
+
+    // Defining xRange and yRange
+    double xRange = xMax - xMin;
+    double yRange = yMax - yMin;
+
+    // Scaling for the size
+    double imageX = size*(xRange/max(xRange,yRange));
+    double imageY = size*(yRange/max(xRange,yRange));
+
+
+    img::EasyImage image(roundToInt(imageX),roundToInt(imageY),img::Color(255 * backgroundColor[0],255 * backgroundColor[1],255 * backgroundColor[2]));
+
+    // Defining scaling factor d
+    double scalingFactorD = 0.95*(imageX/xRange);
+
+    // Defining dcX and dcY
+    double dcX = scalingFactorD*(xMin+xMax)/2;
+    double dcY = scalingFactorD*(yMin+yMax)/2;
+
+
+    // TODO for debugging
+    cout << endl << endl;
+    cout << "Values:" << endl;
+    cout << endl << "xMin = " << xMin;
+    cout << endl << "xMax = " << xMax;
+    cout << endl << "yMin = " << yMin;
+    cout << endl << "yMax = " << yMax;
+    cout << endl << endl << endl;
+
+    cout << endl << "xRange = " << xRange;
+    cout << endl << "yRange = " << yRange;
+    cout << endl << "imageX = " << imageX;
+    cout << endl << "imageY = " << imageY;
+    cout << endl << "scaling factor d = " << scalingFactorD;
+    cout << endl << "dcX = " << dcX;
+    cout << endl << "dcY = " << dcY;
+    cout << endl << endl << endl;
+
+    for (auto line: lines) {
+
+        // Before actually drawing, apply the scaling factor d ...
+        // ... and fixing the middle point of the image
+        line.p1.x = line.p1.x * scalingFactorD + imageX / 2 - dcX;
+        line.p1.y = line.p1.y * scalingFactorD + imageY / 2 - dcY;
+        line.p2.x = line.p2.x * scalingFactorD + imageX / 2 - dcX;
+        line.p2.y = line.p2.y * scalingFactorD + imageY / 2 - dcY;
+
+        image.draw_line(roundToInt(line.p1.x),roundToInt(line.p1.y),roundToInt(line.p2.x),roundToInt(line.p2.y),img::Color(line.color.red,line.color.green,line.color.blue));
+    }
+    return image;
 }
 
 string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator, unsigned int nrOfIterations) {
@@ -56,16 +264,6 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
     double currentAngle = sys.get_starting_angle() * M_PI / 180;
     const set<char>& alphabet = sys.get_alphabet();
     const string& initiator = sys.get_initiator();
-    img::EasyImage image(size,size);
-
-    // First drawing the background
-    for (int i = 0; i < size-1; i++) {
-        for (int j = 0; j < size-1; j++) {
-            image(i,j).red = roundToInt(255 * backgroundColor[0]);
-            image(i,j).green = roundToInt(255 * backgroundColor[1]);
-            image(i,j).blue = roundToInt(255 * backgroundColor[2]);
-        }
-    }
 
     // Then creating a Lines2D object to draw later
     Lines2D lines;
@@ -115,13 +313,13 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
             }
         }
     }
-    image.draw2DLines(lines,size);
+    img::EasyImage image = draw2DLines(lines,size, backgroundColor);
     return image;
 }
 
 img::EasyImage generate_image(const ini::Configuration &configuration) {
 
-    img::EasyImage image;
+
     string typeString = configuration["General"]["type"].as_string_or_die();
 
 
@@ -132,15 +330,26 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         const int size = configuration["General"]["size"].as_int_or_die();
         ifstream input_stream(inputfile);
         LParser::LSystem2D lSystem2D = createLSystem2D(inputfile); // Creating the lSystem here from the input file
-        image = LSystem2D(lSystem2D,backgroundColor, size, color);
-
-
+        return LSystem2D(lSystem2D,backgroundColor, size, color);
     }
 
-	return image;
+    else if (typeString == "Wireframe") {
+
+        Figure figure;
+        figure.rotateX = configuration["Figure0"]["rotateX"].as_double_or_die();
+        figure.rotateY = configuration["Figure0"]["rotateY"].as_double_or_die();
+        figure.rotateZ = configuration["Figure0"]["rotateZ"].as_double_or_die();
+        Face face;
+
+
+        //const string input;
+        //const int size = configuration["General"]["size"].as_int_or_die();
+        //vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
+        //const int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
+        //const vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
+
+        }
 }
-
-
 
 int main(int argc, char const* argv[])
 {
