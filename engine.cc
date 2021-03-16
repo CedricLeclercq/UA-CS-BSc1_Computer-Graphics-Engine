@@ -53,7 +53,9 @@ Matrix scalefigure(const double scale) {
     return matrix;
 }
 
-Matrix rotateX(const double angle) {
+Matrix rotateX(double angle) {
+
+    //angle = angle * M_PI/180;
 
     Matrix matrix;
     matrix(1,1) = 1;
@@ -66,20 +68,25 @@ Matrix rotateX(const double angle) {
     return matrix;
 }
 
-Matrix rotateY(const double angle) {
+Matrix rotateY( double angle) {
+
+    //angle = angle * M_PI/180;
+
 
     Matrix matrix;
     matrix(1,1) = cos(angle);
     matrix(1,3) = -sin(angle);
     matrix(2,2) = 1;
-    matrix(3,0) = sin(angle);
+    matrix(3,1) = sin(angle);
     matrix(3,3) = cos(angle);
     matrix(4,4) = 1;
 
     return matrix;
 }
 
-Matrix rotateZ(const double angle) {
+Matrix rotateZ( double angle) {
+
+    //angle = angle * M_PI/180;
 
     Matrix matrix;
 
@@ -104,11 +111,11 @@ Matrix translate(const Vector3D &vector) {
     matrix(4,2) = vector.y;
     matrix(4,3) = vector.z;
     matrix(4,4) = 1;
-
     return matrix;
 }
 
 void applyTransformation(Figure & figure, const Matrix & matrix) {
+    matrix.print(cout);
     for (auto & point: figure.points) {
         point = point * matrix;
     }
@@ -117,14 +124,17 @@ void applyTransformation(Figure & figure, const Matrix & matrix) {
 void toPolar(const Vector3D &point, double &theta, double &phi, double &r) {
 
     // r
-    r = sqrt((pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2)));
+    r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
 
     // theta
+
     theta = atan2(point.y, point.x);
 
     // phi
-    phi = acos(r);
+    phi = acos(point.z/r);
 }
+
+
 
 Matrix eyePointTrans(const Vector3D &eyepoint) {
 
@@ -134,8 +144,20 @@ Matrix eyePointTrans(const Vector3D &eyepoint) {
     // Declaring the polar coordinates
     double theta, phi, r;
 
+
     // Initialising theta, phi and r
     toPolar(eyepoint,theta,phi,r);
+
+    Vector3D test = Vector3D::point(0,0,-r);
+
+    matrix = rotateZ((-M_PI / 2) - theta) * rotateX(phi*(-1.0)) * translate(test);
+
+    /*
+    // Debug
+    cout << endl;
+    cout << "Theta: " << theta << endl;
+    cout << "Phi: " << phi << endl;
+    cout << "R: " << r << endl;
 
     // Creating the eye point transformation matrix
     matrix(1,1) = -sin(theta);
@@ -148,15 +170,21 @@ Matrix eyePointTrans(const Vector3D &eyepoint) {
     matrix(3,3) = cos(phi);
     matrix(4,3) = -r;
     matrix(4,4) = 1;
-
+    return matrix;
+     */
     return matrix;
 }
 
-Point2D doProjection(const Vector3D &point, const double d) {
+Point2D doProjection(const Vector3D * point, const double d) {
 
-    Point2D point2D; // TODO | does this work?
-    point2D.x = ((d*point.x)/-point.z);
-    point2D.y = ((d*point.y)/-point.z);
+    Point2D point2D;
+    if (point->z != 0) {
+        point2D.x = ((d * point->x) / -point->z);
+        point2D.y = ((d * point->y) / -point->z);
+    } else {
+        point2D.x = 0;
+        point2D.y = 0;
+    }
 
     return point2D;
 }
@@ -183,9 +211,6 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
         if (line.p2.y < yMin) { yMin = line.p2.y; }
         if (line.p2.y > yMax) { yMax = line.p2.y; }
     }
-
-    cout << endl << xMin << " " << xMax << " " << yMin << " " << yMax << endl << endl;
-
     // Defining xRange and yRange
     double xRange = xMax - xMin;
     double yRange = yMax - yMin;
@@ -262,7 +287,6 @@ string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator
 
 img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
     double currentAngle = sys.get_starting_angle() * M_PI / 180;
-    const set<char>& alphabet = sys.get_alphabet();
     const string& initiator = sys.get_initiator();
 
     // Then creating a Lines2D object to draw later
@@ -323,8 +347,11 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
     string typeString = configuration["General"]["type"].as_string_or_die();
 
 
-    if (typeString == "2DLSystem") { // A 2DLSystem - initialising everything
-        const string inputfile = configuration["2DLSystem"]["inputfile"];
+    /*
+     * Reading a 2DLSystem
+     */
+    if (typeString == "2DLSystem") {
+        const string inputfile = configuration["2DLSystem"]["inputfile"].as_string_or_die();
         vector<double> color = configuration["2DLSystem"]["color"].as_double_tuple_or_die();
         vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
         const int size = configuration["General"]["size"].as_int_or_die();
@@ -333,22 +360,97 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         return LSystem2D(lSystem2D,backgroundColor, size, color);
     }
 
+    /*
+     * Reading a Wireframe
+     */
     else if (typeString == "Wireframe") {
 
         Figure figure;
-        figure.rotateX = configuration["Figure0"]["rotateX"].as_double_or_die();
-        figure.rotateY = configuration["Figure0"]["rotateY"].as_double_or_die();
-        figure.rotateZ = configuration["Figure0"]["rotateZ"].as_double_or_die();
-        Face face;
+        int nrPoints = configuration["Figure0"]["nrPoints"].as_int_or_die();
+        int nrLines = configuration["Figure0"]["nrLines"].as_int_or_die();
 
-
-        //const string input;
-        //const int size = configuration["General"]["size"].as_int_or_die();
-        //vector<double> backgroundColor = configuration["General"]["backgroundcolor"].as_double_tuple_or_die();
-        //const int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
-        //const vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
-
+        int iterator = 0;
+        string point;
+        while (iterator < nrPoints) {
+            point = "point";
+            point += to_string(iterator);
+            vector<double> points = configuration["Figure0"][point].as_double_tuple_or_die();
+            Vector3D createdPoint;
+            createdPoint.x = points[0];
+            createdPoint.y = points[1];
+            createdPoint.z = points[2];
+            figure.points.push_back(createdPoint);
+            iterator++;
         }
+        iterator = 0;
+        string line;
+        vector<pair<Vector3D*,Vector3D*>> lines;
+        while (iterator < nrLines) {
+            line = "line";
+            line += to_string(iterator);
+            vector<int> newLines = configuration["Figure0"][line].as_int_tuple_or_die();
+            //MyClass *myclass;
+            //MyClass c;
+            //myclass = & c;
+            Vector3D *vector;
+            vector = & figure.points[newLines[0]];
+            Vector3D *vectorB;
+            vectorB = & figure.points[newLines[1]];
+
+            lines.emplace_back(vector,vectorB);
+
+            iterator++;
+        }
+
+        // rotate, scale and translate
+
+
+
+        vector<double> center = configuration["Figure0"]["center"].as_double_tuple_or_die();
+        Vector3D centerVector;
+        //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
+        centerVector.x = center[0]; centerVector.y = center[1]; centerVector.z = center[2];
+        //applyTransformation(figure,translate(centerVector));
+
+        Matrix final = scalefigure(configuration["Figure0"]["scale"].as_double_or_die()) *
+                       rotateX(configuration["Figure0"]["rotateX"].as_double_or_die()) *
+                       rotateY(configuration["Figure0"]["rotateY"].as_double_or_die()) *
+                       rotateZ(configuration["Figure0"]["rotateZ"].as_double_or_die()) *
+                       translate(centerVector);
+
+
+        applyTransformation(figure,final);
+
+
+        // Eye point transformation
+        vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
+        Vector3D eye3D;
+        eye3D.x = eye[0]; eye3D.y = eye[1]; eye3D.z = eye[2];
+        applyTransformation(figure,eyePointTrans(eye3D));
+
+        // Converting to 2D lines
+        Lines2D lines2D;
+        vector<double> color = configuration["Figure0"]["color"].as_double_tuple_or_die();
+
+        for (auto & line3D: lines) {
+            Line2D line2D;
+            line2D.p1 = doProjection(line3D.first,1);
+            line2D.p2 = doProjection(line3D.second,1);
+            line2D.color.red = color[0] * 255;
+            line2D.color.green = color[1] * 255;
+            line2D.color.blue = color[2] * 255;
+            lines2D.push_back(line2D);
+        }
+
+        cout << "All lines: ";
+        for (auto linedd: lines2D) {
+            cout << "p1: " << linedd.p1.x << "," << linedd.p1.y << endl << "p2: " << linedd.p2.x << "," << linedd.p2.y << endl;
+        }
+
+        return draw2DLines(lines2D,configuration["General"]["size"].as_int_or_die(),configuration["General"]["backgroundcolor"].as_double_tuple_or_die());
+    }
+    img::EasyImage imaged;
+    return imaged;
 }
 
 int main(int argc, char const* argv[])

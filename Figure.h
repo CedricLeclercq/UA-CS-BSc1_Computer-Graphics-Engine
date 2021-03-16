@@ -18,9 +18,6 @@ public:
     std::vector<Face> faces;
     Color color;
 
-    double rotateX;
-    double rotateY;
-    double rotateZ;
 };
 
 typedef std::list<Figure> Figures3D;
