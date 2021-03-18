@@ -32,6 +32,24 @@ Color.h
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Point2D.h
 
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.cc
+easy_image.h
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
+algorithm
+-
+assert.h
+-
+math.h
+-
+iostream
+-
+cmath
+-
+list
+-
+Line2D.h
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
+
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
 stdint.h
 -
@@ -76,6 +94,26 @@ cmath
 utility
 -
 stack
+-
+
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.cc
+ini_configuration.h
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h
+algorithm
+-
+cassert
+-
+cctype
+-
+exception
+-
+functional
+-
+iomanip
+-
+memory
+-
+sstream
 -
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h

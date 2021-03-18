@@ -421,9 +421,9 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             //applyTransformation(figure,translate(centerVector));
 
             Matrix final = scalefigure(configuration[figureName]["scale"].as_double_or_die()) *
-                           rotateX(configuration[figureName]["rotateX"].as_double_or_die()) *
-                           rotateY(configuration[figureName]["rotateY"].as_double_or_die()) *
-                           rotateZ(configuration[figureName]["rotateZ"].as_double_or_die()) *
+                           rotateX(configuration[figureName]["rotateX"].as_double_or_die() * M_PI / 180) *
+                           rotateY(configuration[figureName]["rotateY"].as_double_or_die() * M_PI / 180) *
+                           rotateZ(configuration[figureName]["rotateZ"].as_double_or_die() * M_PI / 180) *
                            translate(centerVector);
 
 
