@@ -12,7 +12,6 @@ class Line2D {
 public:
     Point2D p1,p2;
     Color color;
-
 };
 
 

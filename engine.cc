@@ -4,7 +4,6 @@
 #include "l_parser.h"
 #include "l_parser.cc"
 #include "Figure.h"
-#include "wireframe.h"
 
 #include <fstream>
 #include <iostream>
@@ -152,26 +151,6 @@ Matrix eyePointTrans(const Vector3D &eyepoint) {
 
     matrix = rotateZ((-M_PI / 2) - theta) * rotateX(phi*(-1.0)) * translate(test);
 
-    /*
-    // Debug
-    cout << endl;
-    cout << "Theta: " << theta << endl;
-    cout << "Phi: " << phi << endl;
-    cout << "R: " << r << endl;
-
-    // Creating the eye point transformation matrix
-    matrix(1,1) = -sin(theta);
-    matrix(1,2) = -cos(theta) * cos(phi);
-    matrix(1,3) = cos(theta) * sin (phi);
-    matrix(2,1) = cos(theta);
-    matrix(2,2) = -sin(theta) * cos(phi);
-    matrix(2,3) = sin(theta) * sin (phi);
-    matrix(3,2) = sin(phi);
-    matrix(3,3) = cos(phi);
-    matrix(4,3) = -r;
-    matrix(4,4) = 1;
-    return matrix;
-     */
     return matrix;
 }
 
@@ -371,88 +350,138 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         string figureName;
 
         while (figureIterator < nrFigures) {
+
             figureName = "Figure" + to_string(figureIterator);
-            int nrPoints = configuration[figureName]["nrPoints"].as_int_or_die();
-            int nrLines = configuration[figureName]["nrLines"].as_int_or_die();
 
 
-            Figure figure;
-            int iterator = 0;
-            string point;
-            while (iterator < nrPoints) {
-                point = "point";
-                point += to_string(iterator);
-                vector<double> points = configuration[figureName][point].as_double_tuple_or_die();
-                Vector3D createdPoint;
-                createdPoint.x = points[0];
-                createdPoint.y = points[1];
-                createdPoint.z = points[2];
-                figure.points.push_back(createdPoint);
-                iterator++;
+            // Line drawing
+            if (configuration[figureName]["type"].as_string_or_die() == "LineDrawing") {
+
+
+                int nrPoints = configuration[figureName]["nrPoints"].as_int_or_die();
+                int nrLines = configuration[figureName]["nrLines"].as_int_or_die();
+
+
+                Figure figure;
+                int iterator = 0;
+                string point;
+                while (iterator < nrPoints) {
+                    point = "point";
+                    point += to_string(iterator);
+                    vector<double> points = configuration[figureName][point].as_double_tuple_or_die();
+                    Vector3D createdPoint;
+                    createdPoint.x = points[0];
+                    createdPoint.y = points[1];
+                    createdPoint.z = points[2];
+                    figure.points.push_back(createdPoint);
+                    iterator++;
+                }
+                iterator = 0;
+                string line;
+                //vector<pair<Vector3D *, Vector3D *>> lines;
+                while (iterator < nrLines) {
+                    line = "line";
+                    line += to_string(iterator);
+                    vector<int> newLines = configuration[figureName][line].as_int_tuple_or_die();
+                    Vector3D *vector;
+                    vector = &figure.points[newLines[0]];
+                    Vector3D *vectorB;
+                    vectorB = &figure.points[newLines[1]];
+
+                    figure.lines.emplace_back(vector, vectorB);
+
+                    iterator++;
+                }
+
+
+                // rotate, scale and translate
+                vector<double> center = configuration[figureName]["center"].as_double_tuple_or_die();
+                Vector3D centerVector;
+                //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
+                centerVector.x = center[0];
+                centerVector.y = center[1];
+                centerVector.z = center[2];
+                //applyTransformation(figure,translate(centerVector));
+
+                Matrix final = scalefigure(configuration[figureName]["scale"].as_double_or_die()) *
+                               rotateX(configuration[figureName]["rotateX"].as_double_or_die() * M_PI / 180) *
+                               rotateY(configuration[figureName]["rotateY"].as_double_or_die() * M_PI / 180) *
+                               rotateZ(configuration[figureName]["rotateZ"].as_double_or_die() * M_PI / 180) *
+                               translate(centerVector);
+
+
+                applyTransformation(figure, final);
+
+
+                // Eye point transformation
+                vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
+                Vector3D eye3D;
+                eye3D.x = eye[0];
+                eye3D.y = eye[1];
+                eye3D.z = eye[2];
+                applyTransformation(figure, eyePointTrans(eye3D));
+
+                // Converting to 2D lines
+                vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
+
+                for (auto &line3D: figure.lines) {
+                    Line2D line2D;
+                    line2D.p1 = doProjection(line3D.first, 1);
+                    line2D.p2 = doProjection(line3D.second, 1);
+                    line2D.color.red = color[0] * 255;
+                    line2D.color.green = color[1] * 255;
+                    line2D.color.blue = color[2] * 255;
+                    lines2D.push_back(line2D);
+                }
             }
-            iterator = 0;
-            string line;
-            vector<pair<Vector3D *, Vector3D *>> lines;
-            while (iterator < nrLines) {
-                line = "line";
-                line += to_string(iterator);
-                vector<int> newLines = configuration[figureName][line].as_int_tuple_or_die();
-                //MyClass *myclass;
-                //MyClass c;
-                //myclass = & c;
-                Vector3D *vector;
-                vector = &figure.points[newLines[0]];
-                Vector3D *vectorB;
-                vectorB = &figure.points[newLines[1]];
 
-                lines.emplace_back(vector, vectorB);
+            // Drawing a cube
+            if (configuration[figureName]["type"].as_string_or_die() == "Cube") {
 
-                iterator++;
             }
 
+            // Drawing a Tetrahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "Tetrahedron") {
 
-            // rotate, scale and translate
-            vector<double> center = configuration[figureName]["center"].as_double_tuple_or_die();
-            Vector3D centerVector;
-            //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
-            centerVector.x = center[0];
-            centerVector.y = center[1];
-            centerVector.z = center[2];
-            //applyTransformation(figure,translate(centerVector));
-
-            Matrix final = scalefigure(configuration[figureName]["scale"].as_double_or_die()) *
-                           rotateX(configuration[figureName]["rotateX"].as_double_or_die() * M_PI / 180) *
-                           rotateY(configuration[figureName]["rotateY"].as_double_or_die() * M_PI / 180) *
-                           rotateZ(configuration[figureName]["rotateZ"].as_double_or_die() * M_PI / 180) *
-                           translate(centerVector);
-
-
-            applyTransformation(figure, final);
-
-
-            // Eye point transformation
-            vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
-            Vector3D eye3D;
-            eye3D.x = eye[0];
-            eye3D.y = eye[1];
-            eye3D.z = eye[2];
-            applyTransformation(figure, eyePointTrans(eye3D));
-
-            // Converting to 2D lines
-            vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
-
-            for (auto &line3D: lines) {
-                Line2D line2D;
-                line2D.p1 = doProjection(line3D.first, 1);
-                line2D.p2 = doProjection(line3D.second, 1);
-                line2D.color.red = color[0] * 255;
-                line2D.color.green = color[1] * 255;
-                line2D.color.blue = color[2] * 255;
-                lines2D.push_back(line2D);
             }
+
+            // Drawing a Octahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "Octahedron") {
+
+            }
+
+            // Drawing a Icosahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "Icosahedron") {
+
+            }
+
+            // Drawing a Dodecahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "Dodecahedron") {
+
+            }
+
+            // Drawing a Cone
+            if (configuration[figureName]["type"].as_string_or_die() == "Cone") {
+
+            }
+
+            // Drawing a Cylinder
+            if (configuration[figureName]["type"].as_string_or_die() == "Cylinder") {
+
+            }
+
+            // Drawing a Sphere
+            if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
+
+            }
+
+            // Drawing a Torus
+            if (configuration[figureName]["type"].as_string_or_die() == "Torus") {
+
+            }
+
             figureIterator++;
         }
-
         return draw2DLines(lines2D,configuration["General"]["size"].as_int_or_die(),configuration["General"]["backgroundcolor"].as_double_tuple_or_die());
     }
     img::EasyImage imaged;

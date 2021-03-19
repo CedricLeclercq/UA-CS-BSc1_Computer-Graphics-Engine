@@ -14,9 +14,22 @@
 
 class Figure {
 public:
+    std::vector<pair<Vector3D*,Vector3D*>> lines;
     std::vector<Vector3D> points;
     std::vector<Face> faces;
     Color color;
+
+    void drawCube();
+    void drawTetrahedron();
+    void drawOctahedron();
+    void drawIcosahedron();
+    void drawDodecahedron();
+    void drawCone();
+    void drawCylinder();
+    void drawSphere();
+    void drawTores();
+
+    void scaleTranslateEye();
 
 };
 
