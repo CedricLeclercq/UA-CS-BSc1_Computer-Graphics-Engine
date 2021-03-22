@@ -10,6 +10,7 @@ CMakeFiles/engine.dir/easy_image.cc.o
 CMakeFiles/engine.dir/engine.cc.o
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Color.h
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Face.h
+ /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.cpp
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Point2D.h
@@ -20,7 +21,6 @@ CMakeFiles/engine.dir/engine.cc.o
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.h
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.cc
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
- /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/wireframe.h
 CMakeFiles/engine.dir/ini_configuration.cc.o
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.cc
  /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h

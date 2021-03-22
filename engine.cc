@@ -4,6 +4,7 @@
 #include "l_parser.h"
 #include "l_parser.cc"
 #include "Figure.h"
+#include "Figure.cpp"
 
 #include <fstream>
 #include <iostream>
@@ -37,136 +38,21 @@ LParser::LSystem3D createLSystem3D(const string& inputfile) {
     return l_system;
 }
 
-Matrix scalefigure(const double scale) {
-    /**
-     * @pre figuur moet rond (0,0,0) gecentreerd zijn!
-     *
-     */
-
-    Matrix matrix;
-    matrix(1,1) = scale;
-    matrix(2,2) = scale;
-    matrix(3,3) = scale;
-    matrix(4,4) = 1;
-
-    return matrix;
-}
-
-Matrix rotateX(double angle) {
-
-    //angle = angle * M_PI/180;
-
-    Matrix matrix;
-    matrix(1,1) = 1;
-    matrix(2,2) = cos(angle);
-    matrix(2,3) = sin(angle);
-    matrix(3,2) = -sin(angle);
-    matrix(3,3) = cos (angle);
-    matrix(4,4) = 1;
-
-    return matrix;
-}
-
-Matrix rotateY( double angle) {
-
-    //angle = angle * M_PI/180;
-
-
-    Matrix matrix;
-    matrix(1,1) = cos(angle);
-    matrix(1,3) = -sin(angle);
-    matrix(2,2) = 1;
-    matrix(3,1) = sin(angle);
-    matrix(3,3) = cos(angle);
-    matrix(4,4) = 1;
-
-    return matrix;
-}
-
-Matrix rotateZ( double angle) {
-
-    //angle = angle * M_PI/180;
-
-    Matrix matrix;
-
-    matrix(1,1) = cos(angle);
-    matrix(1,2) = sin(angle);
-    matrix(2,1) = -sin(angle);
-    matrix(2,2) = cos(angle);
-    matrix(3,3) = 1;
-    matrix(4,4) = 1;
-
-    return matrix;
-}
-
-Matrix translate(const Vector3D &vector) {
-
-    Matrix matrix;
-
-    matrix(1,1) = 1;
-    matrix(2,2) = 1;
-    matrix(3,3) = 1;
-    matrix(4,1) = vector.x;
-    matrix(4,2) = vector.y;
-    matrix(4,3) = vector.z;
-    matrix(4,4) = 1;
-    return matrix;
-}
-
-void applyTransformation(Figure & figure, const Matrix & matrix) {
-    matrix.print(cout);
-    for (auto & point: figure.points) {
-        point = point * matrix;
-    }
-}
-
-void toPolar(const Vector3D &point, double &theta, double &phi, double &r) {
-
-    // r
-    r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
-
-    // theta
-
-    theta = atan2(point.y, point.x);
-
-    // phi
-    phi = acos(point.z/r);
-}
-
-
-
-Matrix eyePointTrans(const Vector3D &eyepoint) {
-
-    // Declaring the matrix
-    Matrix matrix;
-
-    // Declaring the polar coordinates
-    double theta, phi, r;
-
-
-    // Initialising theta, phi and r
-    toPolar(eyepoint,theta,phi,r);
-
-    Vector3D test = Vector3D::point(0,0,-r);
-
-    matrix = rotateZ((-M_PI / 2) - theta) * rotateX(phi*(-1.0)) * translate(test);
-
-    return matrix;
-}
-
-Point2D doProjection(const Vector3D * point, const double d) {
-
-    Point2D point2D;
-    if (point->z != 0) {
-        point2D.x = ((d * point->x) / -point->z);
-        point2D.y = ((d * point->y) / -point->z);
-    } else {
-        point2D.x = 0;
-        point2D.y = 0;
+void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color) {
+    for (auto &line3D: figure.lines) {
+        Line2D line2D;
+        line2D.p1 = figure.doProjection(line3D.first, 1);
+        line2D.p2 = figure.doProjection(line3D.second, 1);
+        line2D.color.red = color[0] * 255;
+        line2D.color.green = color[1] * 255;
+        line2D.color.blue = color[2] * 255;
+        lines2D.push_back(line2D);
     }
 
-    return point2D;
+    // TODO add garbage collection after turning the object in 2D
 }
+
+
 
 img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<double>& backgroundColor) {
 
@@ -351,7 +237,27 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
 
         while (figureIterator < nrFigures) {
 
+
+            // Getting all the data for this figure
             figureName = "Figure" + to_string(figureIterator);
+            vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
+            vector<double> center = configuration[figureName]["center"].as_double_tuple_or_die();
+            Vector3D centerVector;
+            //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
+            centerVector.x = center[0];
+            centerVector.y = center[1];
+            centerVector.z = center[2];
+            double scale = configuration[figureName]["scale"].as_double_or_die();
+            double rotateX = M_PI / 180 * configuration[figureName]["rotateX"].as_double_or_die();
+            double rotateY = M_PI / 180 * configuration[figureName]["rotateY"].as_double_or_die();
+            double rotateZ = M_PI / 180 * configuration[figureName]["rotateZ"].as_double_or_die();
+            // Eye point transformation
+            vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
+            Vector3D eye3D;
+            eye3D.x = eye[0];
+            eye3D.y = eye[1];
+            eye3D.z = eye[2];
+            // All data has been read here
 
 
             // Line drawing
@@ -369,10 +275,10 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                     point = "point";
                     point += to_string(iterator);
                     vector<double> points = configuration[figureName][point].as_double_tuple_or_die();
-                    Vector3D createdPoint;
-                    createdPoint.x = points[0];
-                    createdPoint.y = points[1];
-                    createdPoint.z = points[2];
+                    auto * createdPoint = new Vector3D;
+                    createdPoint->x = points[0];
+                    createdPoint->y = points[1];
+                    createdPoint->z = points[2];
                     figure.points.push_back(createdPoint);
                     iterator++;
                 }
@@ -383,101 +289,89 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                     line = "line";
                     line += to_string(iterator);
                     vector<int> newLines = configuration[figureName][line].as_int_tuple_or_die();
-                    Vector3D *vector;
-                    vector = &figure.points[newLines[0]];
-                    Vector3D *vectorB;
-                    vectorB = &figure.points[newLines[1]];
+                    Vector3D *vector = figure.points[newLines[0]];
+                    Vector3D *vectorB = figure.points[newLines[1]];
 
                     figure.lines.emplace_back(vector, vectorB);
 
                     iterator++;
                 }
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
 
-
-                // rotate, scale and translate
-                vector<double> center = configuration[figureName]["center"].as_double_tuple_or_die();
-                Vector3D centerVector;
-                //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
-                centerVector.x = center[0];
-                centerVector.y = center[1];
-                centerVector.z = center[2];
-                //applyTransformation(figure,translate(centerVector));
-
-                Matrix final = scalefigure(configuration[figureName]["scale"].as_double_or_die()) *
-                               rotateX(configuration[figureName]["rotateX"].as_double_or_die() * M_PI / 180) *
-                               rotateY(configuration[figureName]["rotateY"].as_double_or_die() * M_PI / 180) *
-                               rotateZ(configuration[figureName]["rotateZ"].as_double_or_die() * M_PI / 180) *
-                               translate(centerVector);
-
-
-                applyTransformation(figure, final);
-
-
-                // Eye point transformation
-                vector<double> eye = configuration["General"]["eye"].as_double_tuple_or_die();
-                Vector3D eye3D;
-                eye3D.x = eye[0];
-                eye3D.y = eye[1];
-                eye3D.z = eye[2];
-                applyTransformation(figure, eyePointTrans(eye3D));
-
-                // Converting to 2D lines
-                vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
-
-                for (auto &line3D: figure.lines) {
-                    Line2D line2D;
-                    line2D.p1 = doProjection(line3D.first, 1);
-                    line2D.p2 = doProjection(line3D.second, 1);
-                    line2D.color.red = color[0] * 255;
-                    line2D.color.green = color[1] * 255;
-                    line2D.color.blue = color[2] * 255;
-                    lines2D.push_back(line2D);
-                }
             }
 
             // Drawing a cube
             if (configuration[figureName]["type"].as_string_or_die() == "Cube") {
-
+                Figure figure;
+                figure.drawCube();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Tetrahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Tetrahedron") {
-
+                Figure figure;
+                figure.drawTetrahedron();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Octahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Octahedron") {
+                Figure figure;
+                //figure.drawOctahedron();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
 
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Icosahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Icosahedron") {
-
+                Figure figure;
+                figure.drawIcosahedron();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Dodecahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Dodecahedron") {
-
+                Figure figure;
+                //figure.drawDodecahedron();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Cone
             if (configuration[figureName]["type"].as_string_or_die() == "Cone") {
-
+                Figure figure;
+                //figure.drawCone();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Cylinder
             if (configuration[figureName]["type"].as_string_or_die() == "Cylinder") {
-
+                Figure figure;
+                //figure.drawCylinder();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Sphere
             if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
-
+                Figure figure;
+                //figure.drawSphere();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Torus
             if (configuration[figureName]["type"].as_string_or_die() == "Torus") {
-
+                Figure figure;
+                //figure.drawTores();
+                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                convert3D(figure,lines2D,color);
             }
 
             figureIterator++;

@@ -11,6 +11,12 @@
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Face.h
 vector
 -
+vector3d.h
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
+
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.cpp
+Figure.h
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
 Face.h
@@ -31,24 +37,6 @@ Color.h
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Color.h
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Point2D.h
-
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.cc
-easy_image.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
-algorithm
--
-assert.h
--
-math.h
--
-iostream
--
-cmath
--
-list
--
-Line2D.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
 stdint.h
@@ -77,8 +65,8 @@ l_parser.cc
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.cc
 Figure.h
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
-wireframe.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/wireframe.h
+Figure.cpp
+/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.cpp
 fstream
 -
 iostream
@@ -94,26 +82,6 @@ cmath
 utility
 -
 stack
--
-
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.cc
-ini_configuration.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h
-algorithm
--
-cassert
--
-cctype
--
-exception
--
-functional
--
-iomanip
--
-memory
--
-sstream
 -
 
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h
@@ -165,8 +133,4 @@ iomanip
 /Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
 iostream
 -
-
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/wireframe.h
-Figure.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
 
