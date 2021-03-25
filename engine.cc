@@ -39,6 +39,7 @@ LParser::LSystem3D createLSystem3D(const string& inputfile) {
 }
 
 void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color) {
+
     for (auto &line3D: figure.lines) {
         Line2D line2D;
         line2D.p1 = figure.doProjection(line3D.first, 1);
@@ -95,6 +96,7 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
     double dcY = scalingFactorD*(yMin+yMax)/2;
 
 
+    /*
     // TODO for debugging
     cout << endl << endl;
     cout << "Values:" << endl;
@@ -113,6 +115,7 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
     cout << endl << "dcY = " << dcY;
     cout << endl << endl << endl;
 
+     */
     for (auto line: lines) {
 
         // Before actually drawing, apply the scaling factor d ...
@@ -208,7 +211,6 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
 
 img::EasyImage generate_image(const ini::Configuration &configuration) {
 
-
     string typeString = configuration["General"]["type"].as_string_or_die();
 
 
@@ -298,7 +300,6 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                 }
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
-
             }
 
             // Drawing a cube
@@ -320,7 +321,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Octahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Octahedron") {
                 Figure figure;
-                //figure.drawOctahedron();
+                figure.drawOctahedron();
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
 
                 convert3D(figure,lines2D,color);
@@ -337,7 +338,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Dodecahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Dodecahedron") {
                 Figure figure;
-                //figure.drawDodecahedron();
+                figure.drawDodecahedron();
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
             }
@@ -345,7 +346,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Cone
             if (configuration[figureName]["type"].as_string_or_die() == "Cone") {
                 Figure figure;
-                //figure.drawCone();
+                figure.drawCone(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
             }
@@ -361,7 +362,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Sphere
             if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
                 Figure figure;
-                //figure.drawSphere();
+                figure.drawSphere(0,configuration[figureName]["n"].as_int_or_die());
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
             }

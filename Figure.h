@@ -46,6 +46,7 @@ public:
     Matrix scalefigure( const double scale);
 
 
+
 };
 
 typedef std::list<Figure> Figures3D;
