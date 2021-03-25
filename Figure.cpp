@@ -468,6 +468,45 @@ void Figure::drawCone(const int n, const double h) {
 
 void Figure::drawCylinder(const int n, const double h) {
 
+    Vector3D * previousPointDown = nullptr;
+    Vector3D * previousPointUp = nullptr;
+    Vector3D * firstPointDown = nullptr;
+    Vector3D * firstPointUp = nullptr;
+    //auto * faceTop = new Face({});
+    //auto * faceBottom = new Face({});
+    for (int i = 0; i < n; i++) {
+        auto * newPointDown = new Vector3D;
+        auto * newPointUp = new Vector3D;
+        if ( i == 0) {
+            newPointDown->x = cos(0); newPointDown->y = sin(0); newPointDown->z = 0;
+            newPointUp->x = cos(0); newPointUp->y = sin(0); newPointUp->z = h;
+            firstPointDown = newPointDown;
+            firstPointUp = newPointUp;
+        } else {
+            newPointDown->x = cos((2*i*M_PI) / n); newPointDown->y = sin((2*i*M_PI) / n); newPointDown->z = 0;
+            newPointUp->x = cos((2*i*M_PI) / n); newPointUp->y = sin((2*i*M_PI) / n); newPointUp->z = h;
+            auto * newFace = new Face({newPointDown,newPointUp,previousPointUp,previousPointDown});
+            this->faces.push_back(newFace);
+        }
+
+        this->points.push_back(newPointUp);
+        this->points.push_back(newPointDown);
+        previousPointUp = newPointUp;
+        previousPointDown = newPointDown;
+
+        //faceTop->point_indexes.push_back(newPointUp);
+        //faceBottom->point_indexes.push_back(newPointDown);
+    }
+
+    auto * newFace = new Face({previousPointDown,previousPointUp,firstPointUp,firstPointDown});
+    this->faces.push_back(newFace);
+
+    for (auto face: this->faces) {
+        this->lines.emplace_back(face->point_indexes[0],face->point_indexes[1]);
+        this->lines.emplace_back(face->point_indexes[1],face->point_indexes[2]);
+        this->lines.emplace_back(face->point_indexes[2],face->point_indexes[3]);
+        this->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
+    }
 }
 
 void Figure::drawSphere(const double radius, const int n) {

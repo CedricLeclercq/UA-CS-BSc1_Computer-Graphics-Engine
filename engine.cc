@@ -354,7 +354,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Cylinder
             if (configuration[figureName]["type"].as_string_or_die() == "Cylinder") {
                 Figure figure;
-                //figure.drawCylinder();
+                figure.drawCylinder(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
             }
