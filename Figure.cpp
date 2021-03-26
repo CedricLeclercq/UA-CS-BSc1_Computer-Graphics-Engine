@@ -512,7 +512,10 @@ void Figure::drawCylinder(const int n, const double h) {
 void Figure::drawSphere(const double radius, const int n) {
 
     this->drawIcosahedron();
-    this->lines.clear();
+
+    if (n != 0) {
+        this->lines.clear();
+    }
 
     vector<Face*> newFaces;
     for (int i = 0; i < n; i++) {
@@ -570,6 +573,138 @@ void Figure::drawSphere(const double radius, const int n) {
 
 void Figure::drawTorus(const double r, const double R, const int n, const int m) {
 
+    vector<pair<Vector3D*,pair<int,int>>> pointTracker = {}; // Vector that keeps all the points and the i and j they are linked to
+    vector<pair<Vector3D*,pair<int,int>>> firstCircle = {}; // All pairs that have i = 0;
+    vector<pair<Vector3D*,pair<int,int>>> lastCircle = {}; // All pairs that have i = n;
+    vector<pair<Vector3D*,pair<int,int>>> underCircle = {}; // All pairs that have j = 0;
+    vector<pair<Vector3D*,pair<int,int>>> upperCircle = {}; // All pairs that have j = m;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            auto *newPoint = new Vector3D;
+            if (j == 0 and i == 0) {
+                newPoint->x = (R + r * cos(0)) * cos(0);
+                newPoint->y = (R + r * cos(0)) * sin(0);
+                newPoint->z = r * sin(0);
+
+
+            } else if (i == 0 and j != 0) {
+                newPoint->x = (R + r * cos((2*j*M_PI) / m)) * cos(0);
+                newPoint->y = (R + r * cos((2*j*M_PI) / m)) * sin(0);
+                newPoint->z = r * sin((2*j*M_PI) / m);
+
+            } else if (j == 0 and i != 0) {
+                newPoint->x = (R + r * cos(0)) * cos((2*i*M_PI) / n);
+                newPoint->y = (R + r * cos(0)) * sin((2*i*M_PI) / n);
+                newPoint->z = r * sin(0);
+
+            } else {
+                newPoint->x = (R + r * cos((2*j*M_PI) /m)) * cos((2*i*M_PI) / n);
+                newPoint->y = (R + r * cos((2*j*M_PI) /m)) * sin((2*i*M_PI) / n);
+                newPoint->z = r * sin((2*j*M_PI) / m);
+            }
+
+            if (i == 0) {
+                // Collecting all the points on the first circle
+                firstCircle.emplace_back(newPoint,make_pair(i,j));
+            }
+            if (i == n - 1) {
+                // Collecting all the points on the last circle
+                lastCircle.emplace_back(newPoint,make_pair(i,j));
+            }
+            if (j == 0) {
+                underCircle.emplace_back(newPoint,make_pair(i,j));
+            }
+            if (j == m - 1) {
+                upperCircle.emplace_back(newPoint,make_pair(i,j));
+            }
+
+            pointTracker.emplace_back(newPoint, make_pair(i,j));
+            this->points.push_back(newPoint);
+        }
+    }
+    cout << firstCircle.size() << endl;
+    cout << lastCircle.size() << endl;
+    cout << underCircle.size() << endl;
+    cout << upperCircle.size() << endl;
+    for (auto point: pointTracker) {
+        Vector3D * pointi1j = nullptr;
+        Vector3D * pointi1j1 = nullptr;
+        Vector3D * pointij1 = nullptr;
+        for (auto secondPoint: pointTracker) {
+            if (secondPoint.second.first == point.second.first + 1 and secondPoint.second.second == point.second.second) {
+                pointi1j = secondPoint.first;
+
+            } else if (secondPoint.second.first == point.second.first + 1 and secondPoint.second.second == point.second.second + 1) {
+                pointi1j1 = secondPoint.first;
+
+            } else if (secondPoint.second.first == point.second.first and secondPoint.second.second == point.second.second + 1) {
+                pointij1 = secondPoint.first;
+
+            }
+        }
+        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
+            auto *newFace = new Face({point.first, pointi1j, pointi1j1, pointij1});
+            this->faces.push_back(newFace);
+        }
+    }
+
+    for (auto lastPoint: lastCircle) {
+        Vector3D * pointi1j = nullptr;
+        Vector3D * pointi1j1 = nullptr;
+        Vector3D * pointij1 = nullptr;
+        for (auto secondLastPoint: lastCircle) {
+            if (secondLastPoint.second.second == lastPoint.second.second + 1) {
+                pointij1 = secondLastPoint.first;
+            }
+        }
+        for (auto firstPoint: firstCircle) {
+            if (firstPoint.second.second == lastPoint.second.second + 1) {
+                pointi1j1 = firstPoint.first;
+            }
+            if (firstPoint.second.second == lastPoint.second.second) {
+                pointi1j = firstPoint.first;
+            }
+        }
+        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
+            auto *newFace = new Face({lastPoint.first, pointi1j, pointi1j1, pointij1});
+            this->faces.push_back(newFace);
+        }
+    }
+
+
+    for (auto underPoint: underCircle) {
+        Vector3D * pointi1j = nullptr;
+        Vector3D * pointi1j1 = nullptr;
+        Vector3D * pointij1 = nullptr;
+        for (auto secondUnderPoint: underCircle) {
+            if (secondUnderPoint.second.second == underPoint.second.second + 1) {
+                pointij1 = secondUnderPoint.first;
+            }
+        }
+        for (auto upperPoint: upperCircle) {
+            if (upperPoint.second.second == underPoint.second.second + 1) {
+                pointij1 = upperPoint.first;
+            }
+            if (upperPoint.second.second == underPoint.second.second) {
+                pointi1j1 = upperPoint.first;
+            }
+        }
+        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
+            cout << "HERE" << endl;
+            auto *newFace = new Face({underPoint.first, pointi1j, pointi1j1, pointij1});
+            this->faces.push_back(newFace);
+        }
+    }
+
+
+
+    for (auto face: this->faces) {
+        this->lines.emplace_back(face->point_indexes[0],face->point_indexes[1]);
+        this->lines.emplace_back(face->point_indexes[1],face->point_indexes[2]);
+        this->lines.emplace_back(face->point_indexes[2],face->point_indexes[3]);
+        this->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
+    }
 }
 
 Matrix Figure::scalefigure(const double scale) {

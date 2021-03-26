@@ -370,7 +370,8 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             // Drawing a Torus
             if (configuration[figureName]["type"].as_string_or_die() == "Torus") {
                 Figure figure;
-                //figure.drawTores();
+                figure.drawTorus(configuration[figureName]["r"].as_double_or_die(),configuration[figureName]["R"].as_double_or_die(),
+                                 configuration[figureName]["n"].as_int_or_die(),configuration[figureName]["m"].as_int_or_die());
                 figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 convert3D(figure,lines2D,color);
             }
