@@ -100,7 +100,7 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
 
 
     /*
-    // TODO for debugging
+
     cout << endl << endl;
     cout << "Values:" << endl;
     cout << endl << "xMin = " << xMin;

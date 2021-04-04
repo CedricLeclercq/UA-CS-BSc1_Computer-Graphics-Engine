@@ -48,26 +48,6 @@ ZBuffer.h
 limits
 -
 
-/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.cc
-easy_image.h
-/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.h
-algorithm
--
-assert.h
--
-math.h
--
-iostream
--
-cmath
--
-list
--
-Line2D.h
-/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Line2D.h
-ZBuffer.h
-/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
-
 /Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.h
 stdint.h
 -

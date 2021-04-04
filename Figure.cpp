@@ -573,13 +573,16 @@ void Figure::drawSphere(const double radius, const int n) {
 
 void Figure::drawTorus(const double r, const double R, const int n, const int m) {
 
-    vector<pair<Vector3D*,pair<int,int>>> pointTracker = {}; // Vector that keeps all the points and the i and j they are linked to
+    //vector<pair<Vector3D*,pair<int,int>>> pointTracker = {}; // Vector that keeps all the points and the i and j they are linked to
     vector<pair<Vector3D*,pair<int,int>>> firstCircle = {}; // All pairs that have i = 0;
     vector<pair<Vector3D*,pair<int,int>>> lastCircle = {}; // All pairs that have i = n;
     vector<pair<Vector3D*,pair<int,int>>> underCircle = {}; // All pairs that have j = 0;
     vector<pair<Vector3D*,pair<int,int>>> upperCircle = {}; // All pairs that have j = m;
 
+    vector<vector<Vector3D*>> pointTracker = {};
+
     for (int i = 0; i < n; i++) {
+        vector<Vector3D*> currentIPonts;
         for (int j = 0; j < m; j++) {
             auto *newPoint = new Vector3D;
             if (j == 0 and i == 0) {
@@ -618,33 +621,15 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
             if (j == m - 1) {
                 upperCircle.emplace_back(newPoint,make_pair(i,j));
             }
-
-            pointTracker.emplace_back(newPoint, make_pair(i,j));
+            currentIPonts.push_back(newPoint);
             this->points.push_back(newPoint);
         }
+        pointTracker.push_back(currentIPonts);
     }
-    //cout << firstCircle.size() << endl;
-    //cout << lastCircle.size() << endl;
-    //cout << underCircle.size() << endl;
-    //cout << upperCircle.size() << endl;
-    for (auto point: pointTracker) {
-        Vector3D * pointi1j = nullptr;
-        Vector3D * pointi1j1 = nullptr;
-        Vector3D * pointij1 = nullptr;
-        for (auto secondPoint: pointTracker) {
-            if (secondPoint.second.first == point.second.first + 1 and secondPoint.second.second == point.second.second) {
-                pointi1j = secondPoint.first;
 
-            } else if (secondPoint.second.first == point.second.first + 1 and secondPoint.second.second == point.second.second + 1) {
-                pointi1j1 = secondPoint.first;
-
-            } else if (secondPoint.second.first == point.second.first and secondPoint.second.second == point.second.second + 1) {
-                pointij1 = secondPoint.first;
-
-            }
-        }
-        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
-            auto *newFace = new Face({point.first, pointi1j, pointi1j1, pointij1});
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            auto * newFace = new Face({pointTracker[i][j],pointTracker[(i+1) % n][j],pointTracker[(i+1) % n][(j+1) % m],pointTracker[i][(j+1) % m]});
             this->faces.push_back(newFace);
         }
     }
@@ -673,6 +658,7 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
     }
 
 
+    /*
     for (auto underPoint: underCircle) {
         Vector3D * pointi1j = nullptr;
         Vector3D * pointi1j1 = nullptr;
@@ -696,6 +682,7 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
             this->faces.push_back(newFace);
         }
     }
+     */
 
 
 
