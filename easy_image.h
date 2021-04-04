@@ -23,6 +23,7 @@
 #include <cmath>
 #include <list>
 #include "Line2D.h"
+#include "ZBuffer.h"
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -158,8 +159,6 @@ namespace img
 			 */
 			virtual ~EasyImage();
 
-        void draw2DLines (const Lines2D &lines, const int size);
-
 			/**
 			 * \brief Assignment operator. Allows an easyImage to be assigned to another easyImage
 			 *
@@ -228,6 +227,25 @@ namespace img
 			 */
 			void draw_line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, Color color);
 
+			/**
+             * \brief Draws a line from pixel (x0,y0) to pixel (x1,y1) in the specified color, but keeps in account if another pixel is already drawn, if that pixel's z coordinate is closer to the eye point or not.
+             *
+             * \param x0	the x coordinate of the first pixel
+             * \param y0	the y coordinate of the first pixel
+             * \param z0    the z coordinate of the first pixel
+             * \param x1	the x coordinate of the second pixel
+             * \param y1	the y coordinate of the second pixel
+             * \param z1    the z coordinate of the second pixel
+             * \param color	the color of the line
+             *
+             * These assertions apply:
+             *	assert(x0 < getWidth())
+             * 	assert(y0 < getHeight())
+             * 	assert(x1 < getWidth())
+             * 	assert(y1 < getHeight())
+             */
+            void draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, const double z0, double x1, double y1, const double z1, const Color& color);
+
 		private:
 			friend std::istream& operator>>(std::istream& in, EasyImage & image);
 			/**
@@ -242,7 +260,8 @@ namespace img
 			 * \brief the vector containing all pixels
 			 */
 			std::vector<Color> bitmap;
-	};
+
+    };
 
 	/**
 	 * \brief Writes an img::EasyImage to an output stream in the BMP file format

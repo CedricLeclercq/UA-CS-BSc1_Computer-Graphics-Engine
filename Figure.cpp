@@ -5,7 +5,7 @@
 #include "Figure.h"
 
 
-void Figure::scaleTranslateEye(Vector3D centerVector, Vector3D eye, double scale, double rotateX, double rotateY, double rotateZ) {
+void Figure::scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye, double scale, double rotateX, double rotateY, double rotateZ) {
     // rotate, scale and translate
 
     //applyTransformation(figure,translate(centerVector));
@@ -623,10 +623,10 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
             this->points.push_back(newPoint);
         }
     }
-    cout << firstCircle.size() << endl;
-    cout << lastCircle.size() << endl;
-    cout << underCircle.size() << endl;
-    cout << upperCircle.size() << endl;
+    //cout << firstCircle.size() << endl;
+    //cout << lastCircle.size() << endl;
+    //cout << underCircle.size() << endl;
+    //cout << upperCircle.size() << endl;
     for (auto point: pointTracker) {
         Vector3D * pointi1j = nullptr;
         Vector3D * pointi1j1 = nullptr;
@@ -802,8 +802,6 @@ void Figure::toPolar(const Vector3D &point, double &theta, double &phi, double &
     // phi
     phi = acos(point.z/r);
 }
-
-
 
 Matrix Figure::eyePointTrans(const Vector3D &eyepoint) {
 

@@ -6,39 +6,69 @@
 
 #IncludeRegexTransform: 
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Color.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Color.h
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Face.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Face.h
 vector
 -
 vector3d.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.h
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.cpp
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Figure.cpp
 Figure.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Figure.h
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Figure.h
 Face.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Face.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Face.h
 vector3d.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.h
 vector3d.cc
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.cc
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.cc
 Color.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Color.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Color.h
 list
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Line2D.h
 Point2D.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Point2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Point2D.h
 Color.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Color.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Color.h
+limits
+-
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Point2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Point2D.h
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.cpp
+ZBuffer.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
+
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
+limits
+-
+
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.cc
+easy_image.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.h
+algorithm
+-
+assert.h
+-
+math.h
+-
+iostream
+-
+cmath
+-
+list
+-
+Line2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Line2D.h
+ZBuffer.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
+
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.h
 stdint.h
 -
 vector
@@ -50,23 +80,29 @@ cmath
 list
 -
 Line2D.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Line2D.h
+ZBuffer.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/engine.cc
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/engine.cc
 easy_image.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/easy_image.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/easy_image.h
 ini_configuration.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ini_configuration.h
 Line2D.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Line2D.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Line2D.h
 l_parser.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/l_parser.h
 l_parser.cc
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.cc
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/l_parser.cc
 Figure.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Figure.h
 Figure.cpp
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/Figure.cpp
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/Figure.cpp
+ZBuffer.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.h
+ZBuffer.cpp
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ZBuffer.cpp
 fstream
 -
 iostream
@@ -84,7 +120,7 @@ utility
 stack
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/ini_configuration.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/ini_configuration.h
 iostream
 -
 map
@@ -96,9 +132,9 @@ string
 vector
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.cc
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/l_parser.cc
 l_parser.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/l_parser.h
 assert.h
 -
 iostream
@@ -110,7 +146,7 @@ cctype
 sstream
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/l_parser.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/l_parser.h
 map
 -
 string
@@ -120,9 +156,9 @@ set
 exception
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.cc
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.cc
 vector3d.h
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.h
 cassert
 -
 cmath
@@ -130,7 +166,7 @@ cmath
 iomanip
 -
 
-/Users/cedricleclercq/Desktop/Home/School/0. University/cg/2. Engine/utils/vector3d.h
+/Users/cedricleclercq/Desktop/School/cg/2. Engine/utils/vector3d.h
 iostream
 -
 

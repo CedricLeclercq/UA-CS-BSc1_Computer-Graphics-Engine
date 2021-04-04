@@ -5,6 +5,8 @@
 #include "l_parser.cc"
 #include "Figure.h"
 #include "Figure.cpp"
+#include "ZBuffer.h"
+#include "ZBuffer.cpp"
 
 #include <fstream>
 #include <iostream>
@@ -44,6 +46,7 @@ void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color) {
         Line2D line2D;
         line2D.p1 = figure.doProjection(line3D.first, 1);
         line2D.p2 = figure.doProjection(line3D.second, 1);
+        line2D.z = make_pair(line3D.first->z,line3D.second->z);
         line2D.color.red = color[0] * 255;
         line2D.color.green = color[1] * 255;
         line2D.color.blue = color[2] * 255;
@@ -55,7 +58,7 @@ void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color) {
 
 
 
-img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<double>& backgroundColor) {
+img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<double>& backgroundColor, bool zBuffering) {
 
     //Finding xMin, xMax, yMin, yMax
     double xMin = size;
@@ -116,7 +119,9 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
     cout << endl << endl << endl;
 
      */
+    ZBuffer zbuffer(image.get_width(),image.get_height());
     for (auto line: lines) {
+
 
         // Before actually drawing, apply the scaling factor d ...
         // ... and fixing the middle point of the image
@@ -124,8 +129,16 @@ img::EasyImage draw2DLines (const Lines2D &lines, const int size, const vector<d
         line.p1.y = line.p1.y * scalingFactorD + imageY / 2 - dcY;
         line.p2.x = line.p2.x * scalingFactorD + imageX / 2 - dcX;
         line.p2.y = line.p2.y * scalingFactorD + imageY / 2 - dcY;
+        if (zBuffering) {
 
-        image.draw_line(roundToInt(line.p1.x),roundToInt(line.p1.y),roundToInt(line.p2.x),roundToInt(line.p2.y),img::Color(line.color.red,line.color.green,line.color.blue));
+            image.draw_zbuf_line(zbuffer, line.p1.x, line.p1.y, line.z.first, line.p2.x, line.p2.y, line.z.second,
+                            img::Color(line.color.red, line.color.green, line.color.blue));
+
+        } else {
+            image.draw_line(roundToInt(line.p1.x), roundToInt(line.p1.y), roundToInt(line.p2.x), roundToInt(line.p2.y),
+                            img::Color(line.color.red, line.color.green, line.color.blue));
+        }
+
     }
     return image;
 }
@@ -148,6 +161,33 @@ string recursiveInitiator(const LParser::LSystem2D& sys, const string& initiator
 
     if (nrOfIterations != 0) {
         result = recursiveInitiator(sys,result,nrOfIterations);
+    }
+
+    return result;
+}
+
+string recursiveInitiator3D(const LParser::LSystem3D& sys, const string& initiator, unsigned int nrOfIterations) {
+    string result;
+
+    for (char k: initiator) {
+        if (k != '-' and k != '+' and k != '(' and k != ')' and k != '/' and k != '\\' and k != '&' and k != '|' and k != '^') {
+            if (nrOfIterations != 0) {
+                const string& newString = sys.get_replacement(k);
+                result += newString;
+            }
+        } else if (k == '-') { result += '-';}
+        else if (k == '+') { result += '+';}
+        else if (k == '(') { result += '(';}
+        else if (k == ')') { result += ')';}
+        else if (k == '/') { result += '/';}
+        else if (k == '\\') { result += '\\';}
+        else if (k == '&') { result += '&'; }
+        else if (k == '|') { result += '|'; }
+        else { result += '^'; }
+    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl;
+
+    if (nrOfIterations != 0) {
+        result = recursiveInitiator3D(sys,result,nrOfIterations);
     }
 
     return result;
@@ -187,7 +227,6 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
         } else if (letter == '-') {
             currentAngle -= sys.get_angle() * M_PI / 180;
 
-        //if ( letter == '+' || letter == '-' ) { cout << 1;
         } else {
             Line2D line{};
             bool lengthDraw = sys.draw(letter);
@@ -205,8 +244,48 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
             }
         }
     }
-    img::EasyImage image = draw2DLines(lines,size, backgroundColor);
+    img::EasyImage image = draw2DLines(lines,size, backgroundColor, false);
     return image;
+}
+
+
+// TODO afwerken
+img::EasyImage LSystem3D(const LParser::LSystem3D& sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
+    double currentAngle = sys.get_angle() * M_PI / 180;
+    const string& initiator = sys.get_initiator();
+
+    string fullString = recursiveInitiator3D(sys,initiator,sys.get_nr_iterations());
+
+    auto * currentXYZ = new Vector3D;
+    stack<pair<Vector3D*,double>> stack;
+
+    for (char letter: fullString) {
+        if (letter == '(') {
+            stack.push(make_pair(currentXYZ,currentAngle));
+
+        } else if (letter == ')') {
+            currentXYZ = stack.top().first;
+            currentAngle = stack.top().second;
+            stack.pop();
+
+        } else if (letter == '|') {
+
+
+        } else if (letter == '^') {
+            
+
+        } else if (letter == '&') {
+
+        } else if (letter == '/') {
+
+        } else if (letter == '\\') {
+
+        } else {
+
+        }
+    }
+
+
 }
 
 img::EasyImage generate_image(const ini::Configuration &configuration) {
@@ -230,7 +309,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
     /*
      * Reading a Wireframe
      */
-    else if (typeString == "Wireframe") {
+    else if (typeString == "Wireframe" or typeString == "ZBufferedWireframe") {
         Lines2D lines2D;
 
         int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
@@ -376,9 +455,22 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                 convert3D(figure,lines2D,color);
             }
 
+            // Drawing a 3DLsystem
+            if (configuration[figureName]["type"].as_string_or_die() == "3DLSystem") {
+                LParser::LSystem3D l_system = createLSystem3D(configuration[figureName]["inputfile"].as_string_or_die());
+                LSystem3D(l_system,configuration["General"]["backgroundcolor"].as_double_tuple_or_die(),configuration["General"]["size"].as_int_or_die(),
+                          configuration[figureName]["color"].as_double_tuple_or_die());
+            }
+
             figureIterator++;
         }
-        return draw2DLines(lines2D,configuration["General"]["size"].as_int_or_die(),configuration["General"]["backgroundcolor"].as_double_tuple_or_die());
+        if (typeString == "ZBufferedWireframe") {
+            return draw2DLines(lines2D, configuration["General"]["size"].as_int_or_die(),
+                               configuration["General"]["backgroundcolor"].as_double_tuple_or_die(),true);
+        } else {
+            return draw2DLines(lines2D, configuration["General"]["size"].as_int_or_die(),
+                               configuration["General"]["backgroundcolor"].as_double_tuple_or_die(),false);
+        }
     }
     img::EasyImage imaged;
     return imaged;

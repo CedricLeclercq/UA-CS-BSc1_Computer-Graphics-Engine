@@ -32,7 +32,7 @@ public:
 
 
     // Scaling and translating and eye
-    void scaleTranslateEye(Vector3D centerVector, Vector3D eye, double scale, double rotateX, double rotateY, double rotateZ);
+    void scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye, double scale, double rotateX, double rotateY, double rotateZ);
 
     // Matrices
     Point2D doProjection(const Vector3D * point, const double d);

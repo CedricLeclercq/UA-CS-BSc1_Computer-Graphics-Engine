@@ -23,6 +23,7 @@
 #include <cmath>
 #include <list>
 #include "Line2D.h"
+#include "ZBuffer.h"
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -265,6 +266,106 @@ void img::EasyImage::draw_line(unsigned int x0, unsigned int y0, unsigned int x1
 			}
 		}
 	}
+}
+
+void img::EasyImage::draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, double z0, double x1, double y1, double z1, const Color& color)
+{
+    assert(x0 < this->width && y0 < this->height);
+    assert(x1 < this->width && y1 < this->height);
+    double doublex0 = x0;
+
+
+    if (x0 == x1)
+    {
+        //special case for x0 == x1
+        for (unsigned int i = std::min(y0, y1); i <= std::max(y0, y1); i++)
+        {
+            double oneOverZ = 1;
+            if ((max(y0,y1) - i != 0 and (max(y0,y1) - min(y0,y1)) != 0)) {
+                oneOverZ = ((max(y0,y1) - i) / (max(y0,y1) - min(y0,y1))) / z0 + (1 - ((max(y0,y1) - i) / (max(y0,y1) - min(y0,y1)))) / z1;
+            } else if ((max(y0,y1) - i != 0 and (max(y0,y1) - min(y0,y1)) == 0)) {
+                oneOverZ = ((max(y0,y1) - i) + (1 - max(y0,y1) - i));
+            }
+            if (oneOverZ < zBuffer[roundToInt(x0)][i]) {
+                (*this)((unsigned int) x0, i) = color;
+                zBuffer[(unsigned int) x0][i] = oneOverZ;
+            }
+        }
+    }
+    else if (y0 == y1)
+    {
+        //special case for y0 == y1
+        for (unsigned int i = std::min(x0, x1); i <= std::max(x0, x1); i++)
+        {
+            //double oneOverZ = (i - min(x0,x1) / ((max(x0,x1) - min(x0,x1)))/z0 + (1-( i - min(x0,x1)/(max(x0,x1) - min(x0,x1)))/z1));
+            double oneOverZ = 1;
+            if (max(x0,x1) - i != 0 and (max(x0,x1) - min(x0,x1)) != 0) {
+                oneOverZ = (((max(x0, x1) - i) / (max(x0, x1) - min(x0, x1))) / z0) + ((1 - ((max(x0, x1) - i) / (max(x0, x1) - min(x0, x1)))) / z1);
+            } else if (max(x0,x1) - i != 0 and (max(x0,x1) - min(x0,x1)) == 0) {
+                oneOverZ = ((max(x0,x1) - i) + (1 - max(x0,x1) - i));
+            }
+            //double oneOverZ = 0;
+            if (oneOverZ < zBuffer[i][roundToInt(y0)]) {
+                (*this)(i, (unsigned int) y0) = color;
+                zBuffer[i][(unsigned int)y0] = oneOverZ;
+            }
+        }
+    }
+    else
+    {
+        if (x0 > x1)
+        {
+            //flip points if x1>x0: we want x0 to have the lowest value
+            std::swap(x0, x1);
+            std::swap(y0, y1);
+            std::swap(z0,z1);
+        }
+        double m = ((double) y1 - (double) y0) / ((double) x1 - (double) x0);
+        if (-1.0 <= m && m <= 1.0)
+        {
+            for (unsigned int i = 0; i <= (x1 - x0); i++)
+            {
+                double oneOverZ = 1;
+                if (x1 - x0 - i != 0 and (x1 - x0) != 0) {
+                    oneOverZ = (((x1 - x0 - i) / (x1 - x0)) / z0) + (1 - ((x1 - x0 - i) / (x1 - x0))) / z1;
+                }cout << oneOverZ << endl;
+                if (oneOverZ < zBuffer[x0+i][(unsigned int) round(y0 + m * i)]) {
+                    (*this)((unsigned int) x0 + i, (unsigned int) round(y0 + m * i)) = color;
+                    zBuffer[x0 + i][(unsigned int) round(y0 + m * i)] = oneOverZ;
+                }
+            }
+        }
+        else if (m > 1.0)
+        {
+            for (unsigned int i = 0; i <= (y1 - y0); i++)
+            {
+                //double oneOverZ = ((y1 - y0)/z0 + (1-(y1 - y0)/z1));
+                double oneOverZ = 1;
+                if (y1 - y0 - i != 0 and (y1 - y0) != 0) {
+                    oneOverZ = (((y1 - y0 - i) / (y1 - y0)) / z0) + (1 - ((y1 - y0 - i) / (y1 - y0))) / z1;
+                }cout << oneOverZ << endl;
+                if (oneOverZ < zBuffer[(unsigned int) round(x0 + (i / m))][(unsigned int) y0 + i]) {
+                    (*this)((unsigned int) round(x0 + (i / m)), (unsigned int) y0 + i) = color;
+                    zBuffer[(unsigned int) round(x0 + (i / m))][(unsigned int) y0 + i] = oneOverZ;
+                }
+            }
+        }
+        else if (m < -1.0)
+        {
+            for (unsigned int i = 0; i <= (y0 - y1); i++)
+            {
+                //double oneOverZ = ((y0 - y1)/z0 + (1-(y0 - y1)/z1));
+                double oneOverZ = 1;
+                if (y0 - y1 - i != 0 and (y0 - y1) != 0) {
+                    oneOverZ = (((y0 - y1 - i) / (y0 - y1)) / z0) + (1 - ((y0 - y1 - i) / (y0 - y1))) / z1;
+                }cout << oneOverZ << endl;
+                if (oneOverZ < zBuffer[(unsigned int) round(x0 - (i / m))][y0 - i]) {
+                    (*this)((unsigned int) round(x0 - (i / m)), (unsigned int)y0 - i) = color;
+                    zBuffer[(unsigned int) round(x0 - (i / m))][(unsigned int)y0 - i] = oneOverZ;
+                }
+            }
+        }
+    }
 }
 std::ostream& img::operator<<(std::ostream& out, EasyImage const& image)
 {
