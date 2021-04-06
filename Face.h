@@ -6,15 +6,19 @@
 #define ENGINE_FACE_H
 #include <vector>
 #include "vector3d.h"
+using namespace std;
 
 
 class Face {
 public:
+    // Variables
     std::vector<Vector3D*> point_indexes;
 
+    // Constructor
     Face(vector<Vector3D*> s) {
         point_indexes = s;
     }
+
 };
 
 

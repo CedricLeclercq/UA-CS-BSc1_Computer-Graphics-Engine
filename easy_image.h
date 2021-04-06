@@ -24,6 +24,7 @@
 #include <list>
 #include "Line2D.h"
 #include "ZBuffer.h"
+#include "vector3d.h"
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -230,13 +231,14 @@ namespace img
 			/**
              * \brief Draws a line from pixel (x0,y0) to pixel (x1,y1) in the specified color, but keeps in account if another pixel is already drawn, if that pixel's z coordinate is closer to the eye point or not.
              *
-             * \param x0	the x coordinate of the first pixel
-             * \param y0	the y coordinate of the first pixel
-             * \param z0    the z coordinate of the first pixel
-             * \param x1	the x coordinate of the second pixel
-             * \param y1	the y coordinate of the second pixel
-             * \param z1    the z coordinate of the second pixel
-             * \param color	the color of the line
+             * \param zbuffer   the ZBuffer for the whole image
+             * \param x0	    the x coordinate of the first pixel
+             * \param y0	    the y coordinate of the first pixel
+             * \param z0        the z coordinate of the first pixel
+             * \param x1	    the x coordinate of the second pixel
+             * \param y1	    the y coordinate of the second pixel
+             * \param z1        the z coordinate of the second pixel
+             * \param color	    the color of the line
              *
              * These assertions apply:
              *	assert(x0 < getWidth())
@@ -246,7 +248,22 @@ namespace img
              */
             void draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, const double z0, double x1, double y1, const double z1, const Color& color);
 
-		private:
+
+            /**
+             * \brief Draws a triangle using the ZBuffering algorithm
+             * @param zBuffer   the ZBuffer for hte whole image
+             * @param A         the first point of the triangle
+             * @param B         the second point of the triangle
+             * @param C         the thirth point of the triangle
+             * @param d         scaling factor d
+             * @param dx        offset dx
+             * @param dy        offset dy
+             * @param color     color needed
+             */
+            void draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vector3D const * B, Vector3D const * C, double d, double dx, double dy, const Color& color);
+
+
+    private:
 			friend std::istream& operator>>(std::istream& in, EasyImage & image);
 			/**
 			 * \brief the width of the image

@@ -7,6 +7,8 @@
 #include "Point2D.h"
 #include "Color.h"
 #include <limits>
+#include <utility>
+using namespace std;
 
 
 class Line2D {
@@ -14,7 +16,7 @@ public:
     Point2D p1{},p2{};
     Color color{};
 
-    std::pair<double,double> z = std::make_pair(std::numeric_limits<double>::infinity(),-std::numeric_limits<double>::infinity());
+    pair<double,double> z = make_pair(numeric_limits<double>::infinity(),-numeric_limits<double>::infinity());
 
     Line2D()=default;
     Line2D(Point2D point1, Point2D point2, Color color) {

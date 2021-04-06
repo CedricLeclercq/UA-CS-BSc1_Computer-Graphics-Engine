@@ -3,3 +3,8 @@
 //
 
 #include "Point2D.h"
+
+Point2D::Point2D(double newx, double newy) {
+    x = newx;
+    y = newy;
+}
