@@ -483,22 +483,31 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                 }
             }
 
+            cout << xMax << " " << xMin << endl;
+            cout << yMax << " " << yMin << endl;
+
 
 
             double xRange = xMax - xMin;
+            cout << xRange << endl;
             double yRange = yMax - yMin;
 
             double imageX = configuration["General"]["size"].as_double_or_die() *(xRange/max(xRange,yRange));
             double imageY = configuration["General"]["size"].as_double_or_die() *(yRange/max(xRange,yRange));
+            cout << "iX:" << xRange << endl;
+            cout << "iY:" << yRange << endl;
 
             img::EasyImage image(imageX,imageY);
 
-            double d = 0.95 * configuration["General"]["size"].as_double_or_die() * (xRange / max(xRange,yRange));
+            double d = 0.95 * (imageX / xRange);
+            cout << "D : " << d << endl;
             double dcX = d*(xMin+xMax)/2;
             double dcY = d*(yMin+yMax)/2;
 
             double dx = (imageX / 2.0) -dcX;
             double dy = (imageY / 2.0) -dcY;
+
+
 
             for (auto & figure: allFigures) {
                 figure.triangulateAll();
