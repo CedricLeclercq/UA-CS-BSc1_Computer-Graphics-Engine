@@ -1,12 +1,12 @@
-#include "easy_image.h"
-#include "ini_configuration.h"
-#include "Line2D.h"
-#include "l_parser.h"
-#include "l_parser.cc"
-#include "Figure.h"
-#include "Figure.cpp"
-#include "ZBuffer.h"
-#include "ZBuffer.cpp"
+#include "Utilities/easy_image.h"
+#include "Utilities/ini_configuration.h"
+#include "2Dobjects/Line2D.h"
+#include "Lsystems/l_parser.h"
+#include "Lsystems/l_parser.cc"
+#include "Figure/Figure.h"
+#include "Figure/Figure.cpp"
+#include "Zbuffering/ZBuffer.h"
+#include "Zbuffering/ZBuffer.cpp"
 
 #include <fstream>
 #include <iostream>
@@ -257,6 +257,7 @@ img::EasyImage LSystem3D(const LParser::LSystem3D& sys, const vector<double>& ba
     string fullString = recursiveInitiator3D(sys,initiator,sys.get_nr_iterations());
 
     auto * currentXYZ = new Vector3D;
+    currentXYZ->x = 0; currentXYZ->y = 0; currentXYZ->z = 0;
     stack<pair<Vector3D*,double>> stack;
 
     for (char letter: fullString) {
@@ -309,12 +310,14 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
     /*
      * Reading a Wireframe
      */
-    else if (typeString == "Wireframe" or typeString == "ZBufferedWireframe") {
+    else if (typeString == "Wireframe" or typeString == "ZBufferedWireframe" or typeString == "ZBuffering") {
         Lines2D lines2D;
 
         int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
         int figureIterator = 0;
         string figureName;
+
+        vector<Figure> allFigures;
 
         while (figureIterator < nrFigures) {
 
@@ -381,89 +384,147 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
                 convert3D(figure,lines2D,color);
             }
 
+            // The figure that will be written on
+            Figure figure;
             // Drawing a cube
             if (configuration[figureName]["type"].as_string_or_die() == "Cube") {
-                Figure figure;
                 figure.drawCube();
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Tetrahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Tetrahedron") {
-                Figure figure;
                 figure.drawTetrahedron();
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Octahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Octahedron") {
-                Figure figure;
                 figure.drawOctahedron();
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Icosahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Icosahedron") {
-                Figure figure;
                 figure.drawIcosahedron();
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Dodecahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Dodecahedron") {
-                Figure figure;
                 figure.drawDodecahedron();
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Cone
             if (configuration[figureName]["type"].as_string_or_die() == "Cone") {
-                Figure figure;
                 figure.drawCone(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Cylinder
             if (configuration[figureName]["type"].as_string_or_die() == "Cylinder") {
-                Figure figure;
                 figure.drawCylinder(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Sphere
             if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
-                Figure figure;
                 figure.drawSphere(0,configuration[figureName]["n"].as_int_or_die());
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
             }
 
             // Drawing a Torus
             if (configuration[figureName]["type"].as_string_or_die() == "Torus") {
-                Figure figure;
                 figure.drawTorus(configuration[figureName]["r"].as_double_or_die(),configuration[figureName]["R"].as_double_or_die(),
                                  configuration[figureName]["n"].as_int_or_die(),configuration[figureName]["m"].as_int_or_die());
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
-                convert3D(figure,lines2D,color);
+
             }
 
-            // Drawing a 3DLsystem
+            // Scaling and converting to 3D
+            figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
+            if (typeString != "ZBuffering") {
+                convert3D(figure, lines2D, color);
+            }
+
+                // Drawing a 3DLsystem
             if (configuration[figureName]["type"].as_string_or_die() == "3DLSystem") {
                 LParser::LSystem3D l_system = createLSystem3D(configuration[figureName]["inputfile"].as_string_or_die());
                 LSystem3D(l_system,configuration["General"]["backgroundcolor"].as_double_tuple_or_die(),configuration["General"]["size"].as_int_or_die(),
                           configuration[figureName]["color"].as_double_tuple_or_die());
             }
 
+
+            //img::Color imgColor(color[0] * 255,color[1] * 255,color[2] * 255);
+            figure.color.red = color[0] * 255; figure.color.green = color[1] * 255; figure.color.blue = color[2] * 255;
+            allFigures.push_back(figure);
             figureIterator++;
         }
+        if (typeString == "ZBuffering") {
+
+            vector<Point2D> allProjectedPoints;
+            for (const auto & figure: allFigures) {
+                for (auto face: figure.faces) {
+                    Point2D projectedA(((face->point_indexes[0]->x) / -face->point_indexes[0]->z), ((face->point_indexes[0]->y) / -face->point_indexes[0]->z));
+                    Point2D projectedB(((face->point_indexes[1]->x) / -face->point_indexes[1]->z), ((face->point_indexes[1]->y) / -face->point_indexes[1]->z));
+                    Point2D projectedC(((face->point_indexes[2]->x) / -face->point_indexes[2]->z), ((face->point_indexes[2]->y) / -face->point_indexes[2]->z));
+                    allProjectedPoints.push_back(projectedA); allProjectedPoints.push_back(projectedB); allProjectedPoints.push_back(projectedC);
+                }
+            }
+            double xMax = 0;
+            double yMax = 0;
+
+            for (auto & line: allProjectedPoints) {
+                xMax = max(line.x,xMax);
+                yMax = max(line.y,yMax);
+            }
+
+            double xMin = xMax;
+            double yMin = yMax;
+
+            for (auto & line: allProjectedPoints) {
+                xMin = min(line.x,xMin);
+                yMin = min(line.y,yMin);
+            }
+
+
+
+
+
+            double xRange = abs(xMax - xMin);
+            cout << xRange << endl;
+            double yRange = abs(yMax - yMin);
+
+            double imageX = configuration["General"]["size"].as_double_or_die() *(xRange/max(xRange,yRange));
+            double imageY = configuration["General"]["size"].as_double_or_die() *(yRange/max(xRange,yRange));
+
+
+
+
+            double d = 0.95 * (imageX / xRange);
+            double dcX = d*(xMin+xMax)/2;
+            double dcY = d*(yMin+yMax)/2;
+
+            double dx = (imageX / 2.0) -dcX;
+            double dy = (imageY / 2.0) -dcY;
+
+            cout << "d " << d << " dx " << dx << " dy " << dy << endl;
+
+
+            img::EasyImage image(imageX,imageY);
+
+            for (auto & figure: allFigures) {
+                figure.triangulateAll();
+            }
+
+
+
+            ZBuffer zbuffer(image.get_width(),image.get_height());
+            for (const auto& figure: allFigures) {
+                for (auto face: figure.faces) {
+                    vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
+                    img::Color imgColor(figure.color.red, figure.color.green, figure.color.blue);
+                    image.draw_zbuf_triag(zbuffer,face->point_indexes[0],face->point_indexes[1],face->point_indexes[2],d,dx,dy,imgColor);
+                }
+            }
+
+            //cout << "made it";
+            //image.draw_line(0,0,1000,1000,{1,0,0});
+            return image;
+        }
+
         if (typeString == "ZBufferedWireframe") {
             return draw2DLines(lines2D, configuration["General"]["size"].as_int_or_die(),
                                configuration["General"]["backgroundcolor"].as_double_tuple_or_die(),true);

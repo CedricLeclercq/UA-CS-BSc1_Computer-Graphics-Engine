@@ -22,8 +22,9 @@
 #include <iostream>
 #include <cmath>
 #include <list>
-#include "Line2D.h"
-#include "ZBuffer.h"
+#include "../2Dobjects/Line2D.h"
+#include "../Zbuffering/ZBuffer.h"
+#include "../3Dobjects/vector3d.h"
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -272,7 +273,6 @@ void img::EasyImage::draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, dou
 {
     assert(x0 < this->width && y0 < this->height);
     assert(x1 < this->width && y1 < this->height);
-    double doublex0 = x0;
 
 
     if (x0 == x1)
@@ -367,6 +367,101 @@ void img::EasyImage::draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, dou
         }
     }
 }
+void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vector3D const * B, Vector3D const * C, double d, double dx, double dy, const Color& color) {
+
+
+    // Some assertions apply
+    assert(A->x < this->width && A->y < this->height);
+    assert(B->x < this->width && B->y < this->height);
+    assert(C->x < this->width && C->y < this->height);
+
+    // Step 1: Projection of the triangle
+    Point2D projectedA(((d * A->x) / -A->z) + dx, ((d * A->y) / -A->z) + dy);
+    Point2D projectedB(((d * B->x) / -B->z) + dx, ((d * B->y) / -B->z) + dy);
+    Point2D projectedC(((d * C->x) / -C->z) + dx, ((d * C->y) / -C->z) + dy);
+
+    // Step 2: calculating the 1/z values
+    double Xg = (projectedA.x + projectedB.x + projectedC.x) / 3;
+    double Yg = (projectedA.y + projectedB.y + projectedC.y) / 3;
+    double oneOverZg = (1 / (3*A->z)) + (1 / (3*B->z)) + (1 / (3*C->z));
+
+
+        // Calculating u and v
+    Vector3D u, v;
+    u.x = B->x - A->x; u.y = B->y - A->y; u.z = B->z - A->z;
+    v.x = C->x - A->x; v.y = C->y - A->y; v.z = C->z - A->z;
+
+        // Calculating w
+    Vector3D w;
+    w.x = u.y * v.z - u.z * v.y;
+    w.y = u.z * v.x - u.x * v.z;
+    w.z = u.x * v.y - u.y * v.x;
+
+        // Calculating k
+    double k = w.x * A->x + w.y * A->y + w.z * A->z;
+
+        // Combining previous calculations to DzDx and DzDy
+    double DzDx = w.x / (-d * k);
+    double DzDy = w.y / (-d * k);
+
+    // Step 3: Calculating yMin and yMax for the iteration later
+    int yMin = roundToInt(min(projectedA.y,min(projectedB.y,projectedC.y)) -0.5);
+    int yMax = roundToInt(max(projectedA.y,max(projectedB.y,projectedC.y)) +0.5);
+
+
+
+    // Step 4: looping
+    for (int y = yMin; y < yMax; y++) {
+
+            //Initialise all the Xl and Xr
+        double Xl_AB = numeric_limits<double>::infinity(), Xl_AC = numeric_limits<double>::infinity(), Xl_BC = numeric_limits<double>::infinity();
+        double Xr_AB = -numeric_limits<double>::infinity(), Xr_AC = -numeric_limits<double>::infinity(), Xr_BC = -numeric_limits<double>::infinity();
+
+        //if (projectedA.y != projectedC.y) {
+            // Algorithm needs A and C to lay on the same horizontal line
+            //std::swap(projectedB.x,projectedC.x);
+            //std::swap(projectedB.y,projectedC.y);
+        //}
+
+        if ((y - projectedA.y)*(y - projectedB.y) <= 0 and projectedA.y != projectedB.y) {
+            // AB
+            double Xi = (projectedB.x + (projectedA.x - projectedB.x) * ((double)y - projectedB.y)/(projectedA.y - projectedB.y));
+            Xl_AB = Xi;
+            Xr_AB = Xi;
+        }
+
+        if ((y - projectedB.y)*(y - projectedC.y) <= 0 and projectedB.y != projectedC.y) {
+            // BC
+            double Xi = (projectedC.x + (projectedB.x - projectedC.x) * ((double)y - projectedC.y)/(projectedB.y - projectedC.y));
+            Xl_BC = Xi;
+            Xr_BC = Xi;
+        }
+
+        if ((y - projectedA.y)*(y - projectedC.y) <= 0 and projectedA.y != projectedC.y) {
+            // AC
+            double Xi = (projectedC.x + (projectedA.x - projectedC.x) * ((double)y - projectedC.y)/(projectedA.y - projectedC.y));
+            Xl_AC = Xi;
+            Xr_AC = Xi;
+        }
+
+        int Xl = roundToInt(min(Xl_AB,min(Xl_AC,Xl_BC)) -0.5);
+        int Xr = roundToInt(max(Xr_AB,max(Xr_AC,Xr_BC)) + 0.5);
+
+
+
+
+        if (Xl >= 0 and Xr >= 0) {
+            for (int x = Xl; x < Xr; x++) {
+                double oneOverZ = 1.0001 * oneOverZg + ((double) x - Xg) * DzDx + ((double) y - Yg) * DzDy;
+                if (zBuffer[x][y] > oneOverZ) {
+                    zBuffer[x][y] = oneOverZ;
+                    (*this)(x, y) = color;
+                }
+            }
+        }
+    }
+}
+
 std::ostream& img::operator<<(std::ostream& out, EasyImage const& image)
 {
 
@@ -495,6 +590,3 @@ std::istream& img::operator>>(std::istream& in, EasyImage & image)
 	//okay we're done
 	return in;
 }
-
-
-

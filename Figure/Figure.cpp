@@ -4,7 +4,7 @@
 
 #include "Figure.h"
 
-
+// Scaling
 void Figure::scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye, double scale, double rotateX, double rotateY, double rotateZ) {
     // rotate, scale and translate
 
@@ -20,8 +20,22 @@ void Figure::scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye
     applyTransformation(*this, final);
     applyTransformation(*this, eyePointTrans(eye));
 }
+Matrix Figure::scalefigure(const double scale) {
+    /**
+     * @pre figuur moet rond (0,0,0) gecentreerd zijn!
+     *
+     */
 
+    Matrix matrix;
+    matrix(1,1) = scale;
+    matrix(2,2) = scale;
+    matrix(3,3) = scale;
+    matrix(4,4) = 1;
 
+    return matrix;
+}
+
+// Draw figures
 void Figure::drawCube() {
 
 
@@ -80,7 +94,6 @@ void Figure::drawCube() {
         this->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
     }
 }
-
 void Figure::drawTetrahedron() {
 
     // Creating the points
@@ -118,7 +131,6 @@ void Figure::drawTetrahedron() {
 
 
 }
-
 void Figure::drawOctahedron() {
 
     // Creating all the points
@@ -170,7 +182,6 @@ void Figure::drawOctahedron() {
     }
 
 }
-
 void Figure::drawIcosahedron() {
 
     // Creating first point
@@ -261,7 +272,6 @@ void Figure::drawIcosahedron() {
         this->lines.emplace_back(face->point_indexes[2],face->point_indexes[0]);
     }
 }
-
 void Figure::drawDodecahedron() {
 
     // Creating iso points
@@ -429,7 +439,6 @@ void Figure::drawDodecahedron() {
     point20->x = (cos(1 * M_PI / 5) + cos(1 * M_PI / 5) + cos(1 * M_PI / 5)) /3; point20->y = (sin(1 + M_PI / 5) + sin(1 + M_PI / 5) + sin(1 + M_PI / 5)) /3; point20->z = (0.5 + 0.5 + 0.5) /3;
      */
 }
-
 void Figure::drawCone(const int n, const double h) {
 
     auto * topPoint = new Vector3D;
@@ -465,7 +474,6 @@ void Figure::drawCone(const int n, const double h) {
 
 
 }
-
 void Figure::drawCylinder(const int n, const double h) {
 
     Vector3D * previousPointDown = nullptr;
@@ -508,7 +516,6 @@ void Figure::drawCylinder(const int n, const double h) {
         this->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
     }
 }
-
 void Figure::drawSphere(const double radius, const int n) {
 
     this->drawIcosahedron();
@@ -570,7 +577,6 @@ void Figure::drawSphere(const double radius, const int n) {
         this->lines.emplace_back(face->point_indexes[2],face->point_indexes[0]);
     }
 }
-
 void Figure::drawTorus(const double r, const double R, const int n, const int m) {
 
     //vector<pair<Vector3D*,pair<int,int>>> pointTracker = {}; // Vector that keeps all the points and the i and j they are linked to
@@ -634,56 +640,6 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
         }
     }
 
-    for (auto lastPoint: lastCircle) {
-        Vector3D * pointi1j = nullptr;
-        Vector3D * pointi1j1 = nullptr;
-        Vector3D * pointij1 = nullptr;
-        for (auto secondLastPoint: lastCircle) {
-            if (secondLastPoint.second.second == lastPoint.second.second + 1) {
-                pointij1 = secondLastPoint.first;
-            }
-        }
-        for (auto firstPoint: firstCircle) {
-            if (firstPoint.second.second == lastPoint.second.second + 1) {
-                pointi1j1 = firstPoint.first;
-            }
-            if (firstPoint.second.second == lastPoint.second.second) {
-                pointi1j = firstPoint.first;
-            }
-        }
-        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
-            auto *newFace = new Face({lastPoint.first, pointi1j, pointi1j1, pointij1});
-            this->faces.push_back(newFace);
-        }
-    }
-
-
-    /*
-    for (auto underPoint: underCircle) {
-        Vector3D * pointi1j = nullptr;
-        Vector3D * pointi1j1 = nullptr;
-        Vector3D * pointij1 = nullptr;
-        for (auto secondUnderPoint: underCircle) {
-            if (secondUnderPoint.second.second == underPoint.second.second + 1) {
-                pointij1 = secondUnderPoint.first;
-            }
-        }
-        for (auto upperPoint: upperCircle) {
-            if (upperPoint.second.second == underPoint.second.second + 1) {
-                pointij1 = upperPoint.first;
-            }
-            if (upperPoint.second.second == underPoint.second.second) {
-                pointi1j1 = upperPoint.first;
-            }
-        }
-        if (pointi1j != nullptr and pointij1 != nullptr and pointi1j1 != nullptr) {
-            cout << "HERE" << endl;
-            auto *newFace = new Face({underPoint.first, pointi1j, pointi1j1, pointij1});
-            this->faces.push_back(newFace);
-        }
-    }
-     */
-
 
 
     for (auto face: this->faces) {
@@ -694,21 +650,7 @@ void Figure::drawTorus(const double r, const double R, const int n, const int m)
     }
 }
 
-Matrix Figure::scalefigure(const double scale) {
-    /**
-     * @pre figuur moet rond (0,0,0) gecentreerd zijn!
-     *
-     */
-
-    Matrix matrix;
-    matrix(1,1) = scale;
-    matrix(2,2) = scale;
-    matrix(3,3) = scale;
-    matrix(4,4) = 1;
-
-    return matrix;
-}
-
+// Rotating
 Matrix Figure::rotateX(double angle) {
 
     //angle = angle * M_PI/180;
@@ -723,7 +665,6 @@ Matrix Figure::rotateX(double angle) {
 
     return matrix;
 }
-
 Matrix Figure::rotateY( double angle) {
 
     //angle = angle * M_PI/180;
@@ -739,7 +680,6 @@ Matrix Figure::rotateY( double angle) {
 
     return matrix;
 }
-
 Matrix Figure::rotateZ( double angle) {
 
     //angle = angle * M_PI/180;
@@ -756,6 +696,7 @@ Matrix Figure::rotateZ( double angle) {
     return matrix;
 }
 
+// Translate and transform
 Matrix Figure::translate(const Vector3D &vector) {
 
     Matrix matrix;
@@ -769,27 +710,12 @@ Matrix Figure::translate(const Vector3D &vector) {
     matrix(4,4) = 1;
     return matrix;
 }
-
 void Figure::applyTransformation(Figure & figure, const Matrix & matrix) {
 
     for (auto & point: figure.points) {
         *point = *point * matrix;
     }
 }
-
-void Figure::toPolar(const Vector3D &point, double &theta, double &phi, double &r) {
-
-    // r
-    r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
-
-    // theta
-
-    theta = atan2(point.y, point.x);
-
-    // phi
-    phi = acos(point.z/r);
-}
-
 Matrix Figure::eyePointTrans(const Vector3D &eyepoint) {
 
     // Declaring the matrix
@@ -809,6 +735,52 @@ Matrix Figure::eyePointTrans(const Vector3D &eyepoint) {
     return matrix;
 }
 
+// Utils
+void Figure::toPolar(const Vector3D &point, double &theta, double &phi, double &r) {
+
+    // r
+    r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
+
+    // theta
+
+    theta = atan2(point.y, point.x);
+
+    // phi
+    phi = acos(point.z/r);
+}
+void Figure::triangulate(const Face * face) {
+
+    // Variables for accessing the point_indexes
+    int i = 1;
+    int j = 2;
+
+    // Make the new face vector except with the face that was given to this function
+    vector<Face*> newFaces = {};
+    for (auto oldFace: this->faces) {
+        if (oldFace != face) {
+            newFaces.push_back(oldFace);
+        }
+    }
+
+    // Can't triangulate a triangle
+    if (face->point_indexes.size() <= 3) {
+        return;
+    }
+
+    // Doing the triangulation proces
+    while (j < face->point_indexes.size()) {
+        auto * face1 = new Face({face->point_indexes[0], face->point_indexes[i],face->point_indexes[j]});
+        newFaces.push_back(face1);
+        i++;
+        j++;
+    }
+
+    // Fixing this->faces
+    this->faces.clear();
+    for (auto newFace: newFaces) {
+        this->faces.push_back(newFace);
+    }
+}
 Point2D Figure::doProjection(const Vector3D * point, const double d) {
 
     Point2D point2D;
@@ -822,5 +794,38 @@ Point2D Figure::doProjection(const Vector3D * point, const double d) {
 
     return point2D;
 }
+
+void Figure::triangulateAll() {
+
+    vector<Face*> newFaces;
+
+    for (auto face: this->faces) {
+
+        // Variables for accessing the point_indexes
+        int i = 1;
+        int j = 2;
+
+        // Can't triangulate a triangle
+        if (face->point_indexes.size() <= 3) {
+            return;
+        }
+
+        // Doing the triangulation proces
+        while (j < face->point_indexes.size()) {
+            auto * face1 = new Face({face->point_indexes[0], face->point_indexes[i],face->point_indexes[j]});
+            newFaces.push_back(face1);
+            i++;
+            j++;
+        }
+    }
+
+    this->faces.clear();
+    for (auto face: newFaces) {
+        this->faces.push_back(face);
+    }
+}
+
+
+
 
 

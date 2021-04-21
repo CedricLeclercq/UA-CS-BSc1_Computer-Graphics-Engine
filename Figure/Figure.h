@@ -6,9 +6,9 @@
 #define ENGINE_FIGURE_H
 
 #include "Face.h"
-#include "vector3d.h"
-#include "vector3d.cc"
-#include "Color.h"
+#include "../3Dobjects/vector3d.h"
+#include "../Utilities/Color.h"
+#include "../2Dobjects/Point2D.h"
 #include <list>
 
 
@@ -44,6 +44,10 @@ public:
     Matrix rotateY ( double angle );
     Matrix rotateX ( double angle );
     Matrix scalefigure( const double scale);
+
+    // Utils
+    void triangulate(const Face * face);
+    void triangulateAll();
 
 
 
