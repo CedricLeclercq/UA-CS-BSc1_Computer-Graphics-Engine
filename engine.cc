@@ -253,6 +253,7 @@ img::EasyImage LSystem2D(const LParser::LSystem2D&  sys, const vector<double>& b
 
 
 // TODO afwerken
+
 img::EasyImage LSystem3D(const LParser::LSystem3D& sys, const vector<double>& backgroundColor, int size, vector<double> lineColor) {
     double currentAngle = sys.get_angle() * M_PI / 180;
     const string& initiator = sys.get_initiator();
@@ -291,6 +292,8 @@ img::EasyImage LSystem3D(const LParser::LSystem3D& sys, const vector<double>& ba
 
 
 }
+
+
 
 img::EasyImage generate_image(const ini::Configuration &configuration) {
 
@@ -563,6 +566,11 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         }
         if (typeString == "ZBuffering") {
 
+
+            bool clipping = configuration["General"]["clipping"].as_bool_if_exists(clipping);
+
+
+
             vector<Point2D> allProjectedPoints;
             for (const auto & figure: allFigures) {
                 for (auto face: figure->faces) {
@@ -610,6 +618,14 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
 
             for (auto & figure: allFigures) {
                 figure->triangulateAll();
+            }
+
+            if (clipping) {
+                vector<double> viewDirection = configuration["General"]["viewDirection"].as_double_tuple_or_die();
+                double dNear = configuration["General"]["dNear"].as_double_or_die();
+                double dFar = configuration["Gerenal"]["dFar"].as_double_or_die();
+                double hfov = configuration["General"]["hfov"].as_double_or_die();
+                double aspectRatio = configuration["General"]["aspectRatio"].as_double_or_die();
             }
 
 
