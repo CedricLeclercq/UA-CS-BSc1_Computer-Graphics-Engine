@@ -323,6 +323,33 @@ Utilities/Color.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Color.cpp.s
 .PHONY : Utilities/Color.cpp.s
 
+Utilities/Utils.o: Utilities/Utils.cpp.o
+
+.PHONY : Utilities/Utils.o
+
+# target to build an object file
+Utilities/Utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Utils.cpp.o
+.PHONY : Utilities/Utils.cpp.o
+
+Utilities/Utils.i: Utilities/Utils.cpp.i
+
+.PHONY : Utilities/Utils.i
+
+# target to preprocess a source file
+Utilities/Utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Utils.cpp.i
+.PHONY : Utilities/Utils.cpp.i
+
+Utilities/Utils.s: Utilities/Utils.cpp.s
+
+.PHONY : Utilities/Utils.s
+
+# target to generate assembly for a file
+Utilities/Utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Utils.cpp.s
+.PHONY : Utilities/Utils.cpp.s
+
 Utilities/easy_image.o: Utilities/easy_image.cc.o
 
 .PHONY : Utilities/easy_image.o
@@ -432,6 +459,9 @@ help:
 	@echo "... Utilities/Color.o"
 	@echo "... Utilities/Color.i"
 	@echo "... Utilities/Color.s"
+	@echo "... Utilities/Utils.o"
+	@echo "... Utilities/Utils.i"
+	@echo "... Utilities/Utils.s"
 	@echo "... Utilities/easy_image.o"
 	@echo "... Utilities/easy_image.i"
 	@echo "... Utilities/easy_image.s"

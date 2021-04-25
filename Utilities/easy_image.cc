@@ -411,7 +411,7 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vect
 
 
     // Step 4: looping
-    for (int y = yMin; y < yMax; y++) {
+    for (int y = yMin; y < yMax + 1; y++) {
 
             //Initialise all the Xl and Xr
         double Xl_AB = numeric_limits<double>::infinity(), Xl_AC = numeric_limits<double>::infinity(), Xl_BC = numeric_limits<double>::infinity();
@@ -444,14 +444,14 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vect
             Xr_AC = Xi;
         }
 
-        int Xl = roundToInt(min(Xl_AB,min(Xl_AC,Xl_BC)) -0.5);
-        int Xr = roundToInt(max(Xr_AB,max(Xr_AC,Xr_BC)) + 0.5);
+        int Xl = roundToInt(min(Xl_AB,min(Xl_AC,Xl_BC)) + 0.5);
+        int Xr = roundToInt(max(Xr_AB,max(Xr_AC,Xr_BC)) - 0.5);
 
 
 
 
         if (Xl >= 0 and Xr >= 0) {
-            for (int x = Xl; x < Xr; x++) {
+            for (int x = Xl; x < Xr + 1; x++) {
                 double oneOverZ = 1.0001 * oneOverZg + ((double) x - Xg) * DzDx + ((double) y - Yg) * DzDy;
                 if (zBuffer[x][y] > oneOverZ) {
                     zBuffer[x][y] = oneOverZ;

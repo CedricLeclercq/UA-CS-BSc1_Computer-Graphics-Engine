@@ -11,6 +11,7 @@
 #include "../2Dobjects/Point2D.h"
 #include <list>
 
+enum Class {Cube,Tetrahedron,Octahedron,Dodecahedron,Cone,Cylinder,Sphere,Torus, Icosahedron};
 
 class Figure {
 public:
@@ -18,6 +19,8 @@ public:
     std::vector<Vector3D*> points;
     std::vector<Face*> faces;
     Color color;
+    Class figureClass;
+
 
     // Drawing
     void drawCube();
@@ -25,10 +28,10 @@ public:
     void drawOctahedron();
     void drawIcosahedron();
     void drawDodecahedron();
-    void drawCone(const int n, const double h);
-    void drawCylinder(const int n, const double h);
-    void drawSphere(const double radius, const int n);
-    void drawTorus(const double r, const double R, const int n, const int m);
+    void drawCone(int n, double h);
+    void drawCylinder(int n, double h);
+    void drawSphere(double radius,  int n);
+    void drawTorus(double r, double R, int n, int m);
 
 
     // Scaling and translating and eye
@@ -43,14 +46,22 @@ public:
     Matrix rotateZ ( double angle );
     Matrix rotateY ( double angle );
     Matrix rotateX ( double angle );
-    Matrix scalefigure( const double scale);
+    Matrix scalefigure( double scale );
 
     // Utils
     void triangulate(const Face * face);
     void triangulateAll();
+    vector<Figure*> generateFractal( int nr_iterations, double scale);
+    void identifyAndDraw(enum Class figure);
 
 
+    vector<Figure *> fractals(const vector<Figure*>& allFigures, const double scale);
 
+    vector<Figure *> fractals(const vector<Figure *> &allFigures, const double scale, int nr_of_iterations);
+
+    vector<Figure *> generateFract(const double scale);
+
+    vector<Figure *> fractalGen(const vector<Figure *> &allFractals, int nr_iterations, const double scale);
 };
 
 typedef std::list<Figure> Figures3D;

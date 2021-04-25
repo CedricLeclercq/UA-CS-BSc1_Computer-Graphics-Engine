@@ -7,6 +7,7 @@
 #include "Figure/Figure.cpp"
 #include "Zbuffering/ZBuffer.h"
 #include "Zbuffering/ZBuffer.cpp"
+#include "Utilities/Utils.h"
 
 #include <fstream>
 #include <iostream>
@@ -16,6 +17,8 @@
 #include <cmath>
 #include <utility>
 #include <stack>
+#include <chrono>
+
 using namespace std;
 using Lines2D = std::list<Line2D>;
 
@@ -293,7 +296,6 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
 
     string typeString = configuration["General"]["type"].as_string_or_die();
 
-
     /*
      * Reading a 2DLSystem
      */
@@ -317,7 +319,7 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
         int figureIterator = 0;
         string figureName;
 
-        vector<Figure> allFigures;
+        vector<Figure*> allFigures;
 
         while (figureIterator < nrFigures) {
 
@@ -385,59 +387,163 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             }
 
             // The figure that will be written on
-            Figure figure;
+            auto * figure = new Figure;
             // Drawing a cube
             if (configuration[figureName]["type"].as_string_or_die() == "Cube") {
-                figure.drawCube();
+                figure->drawCube();
+            }
+
+            // Drawing Fractal cube
+            if (configuration[figureName]["type"].as_string_or_die() == "FractalCube") {
+                figure->drawCube();
+                if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
+                    vector<Figure *> newFigures = figure->generateFractal(
+                            configuration[figureName]["nrIterations"].as_int_or_die(),
+                            configuration[figureName]["fractalScale"].as_int_or_die());
+
+
+                    for (auto & figureIt: newFigures) {
+                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        convert3D(*figureIt, lines2D, color);
+                        allFigures.push_back(figureIt);
+                    }
+                    //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
+                    //allFigures = Utils::filterOutFigure(allFigures, figure);
+                    //Utils::addToVector(allFigures, toAddFigures);
+                }
             }
 
             // Drawing a Tetrahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Tetrahedron") {
-                figure.drawTetrahedron();
+                figure->drawTetrahedron();
+            }
+
+            // Drawing a Fractal Tetrahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "FractalTetrahedron") {
+                figure->drawTetrahedron();
+                if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
+                    vector<Figure *> newFigures = figure->generateFractal(
+                            configuration[figureName]["nrIterations"].as_int_or_die(),
+                            configuration[figureName]["fractalScale"].as_int_or_die());
+
+
+                    for (auto & figureIt: newFigures) {
+                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        convert3D(*figureIt, lines2D, color);
+                        allFigures.push_back(figureIt);
+                    }
+                    //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
+                    //allFigures = Utils::filterOutFigure(allFigures, figure);
+                    //Utils::addToVector(allFigures, toAddFigures);
+                }
+
             }
 
             // Drawing a Octahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Octahedron") {
-                figure.drawOctahedron();
+                figure->drawOctahedron();
+            }
+
+            // Drawing Fractal Octahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "FractalOctahedron") {
+                figure->drawOctahedron();
+                if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
+                    vector<Figure *> newFigures = figure->generateFractal(
+                            configuration[figureName]["nrIterations"].as_int_or_die(),
+                            configuration[figureName]["fractalScale"].as_int_or_die());
+
+
+                    for (auto & figureIt: newFigures) {
+                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        convert3D(*figureIt, lines2D, color);
+                        allFigures.push_back(figureIt);
+                    }
+                    //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
+                    //allFigures = Utils::filterOutFigure(allFigures, figure);
+                    //Utils::addToVector(allFigures, toAddFigures);
+                }
             }
 
             // Drawing a Icosahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Icosahedron") {
-                figure.drawIcosahedron();
+                figure->drawIcosahedron();
+            }
+
+            // Drawing fractal Icosahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "FractalIcosahedron") {
+                figure->drawIcosahedron();
+                if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
+                    vector<Figure *> newFigures = figure->generateFractal(
+                            configuration[figureName]["nrIterations"].as_int_or_die(),
+                            configuration[figureName]["fractalScale"].as_int_or_die());
+
+
+                    for (auto & figureIt: newFigures) {
+                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        convert3D(*figureIt, lines2D, color);
+                        allFigures.push_back(figureIt);
+                    }
+                    //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
+                    //allFigures = Utils::filterOutFigure(allFigures, figure);
+                    //Utils::addToVector(allFigures, toAddFigures);
+                }
             }
 
             // Drawing a Dodecahedron
             if (configuration[figureName]["type"].as_string_or_die() == "Dodecahedron") {
-                figure.drawDodecahedron();
+                figure->drawDodecahedron();
+            }
+
+            // Drawing a Fractal Dodecahedron
+            if (configuration[figureName]["type"].as_string_or_die() == "FractalDodecahedron") {
+                figure->drawDodecahedron();
+                if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
+                    vector<Figure *> newFigures = figure->generateFractal(
+                            configuration[figureName]["nrIterations"].as_int_or_die(),
+                            configuration[figureName]["fractalScale"].as_int_or_die());
+
+
+                    for (auto & figureIt: newFigures) {
+                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        convert3D(*figureIt, lines2D, color);
+                        allFigures.push_back(figureIt);
+                    }
+                    //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
+                    //allFigures = Utils::filterOutFigure(allFigures, figure);
+                    //Utils::addToVector(allFigures, toAddFigures);
+                }
             }
 
             // Drawing a Cone
             if (configuration[figureName]["type"].as_string_or_die() == "Cone") {
-                figure.drawCone(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
+                figure->drawCone(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
             }
 
             // Drawing a Cylinder
             if (configuration[figureName]["type"].as_string_or_die() == "Cylinder") {
-                figure.drawCylinder(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
+                figure->drawCylinder(configuration[figureName]["n"].as_int_or_die(), configuration[figureName]["height"].as_double_or_die());
             }
 
             // Drawing a Sphere
             if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
-                figure.drawSphere(0,configuration[figureName]["n"].as_int_or_die());
+                figure->drawSphere(0,configuration[figureName]["n"].as_int_or_die());
             }
 
             // Drawing a Torus
             if (configuration[figureName]["type"].as_string_or_die() == "Torus") {
-                figure.drawTorus(configuration[figureName]["r"].as_double_or_die(),configuration[figureName]["R"].as_double_or_die(),
+                figure->drawTorus(configuration[figureName]["r"].as_double_or_die(),configuration[figureName]["R"].as_double_or_die(),
                                  configuration[figureName]["n"].as_int_or_die(),configuration[figureName]["m"].as_int_or_die());
-
             }
 
             // Scaling and converting to 3D
-            figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
-            if (typeString != "ZBuffering") {
-                convert3D(figure, lines2D, color);
+            string type = configuration[figureName]["type"].as_string_or_die();
+            if (type != "FractalCube" and type != "FractalTetrahedron" and type != "FractalOctahedron" and type != "FractalIcosahedron" and type != "FractalDodecahedron") {
+                figure->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
+                if (typeString != "ZBuffering") {
+                    convert3D(*figure, lines2D, color);
+                }
             }
+
 
                 // Drawing a 3DLsystem
             if (configuration[figureName]["type"].as_string_or_die() == "3DLSystem") {
@@ -448,15 +554,18 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
 
 
             //img::Color imgColor(color[0] * 255,color[1] * 255,color[2] * 255);
-            figure.color.red = color[0] * 255; figure.color.green = color[1] * 255; figure.color.blue = color[2] * 255;
-            allFigures.push_back(figure);
+
+            if (type != "FractalCube" and type != "FractalTetrahedron" and type != "FractalOctahedron" and type != "FractalIcosahedron" and type != "FractalDodecahedron") {
+                allFigures.push_back(figure);
+                figure->color.red = color[0] * 255; figure->color.green = color[1] * 255; figure->color.blue = color[2] * 255;
+            }
             figureIterator++;
         }
         if (typeString == "ZBuffering") {
 
             vector<Point2D> allProjectedPoints;
             for (const auto & figure: allFigures) {
-                for (auto face: figure.faces) {
+                for (auto face: figure->faces) {
                     Point2D projectedA(((face->point_indexes[0]->x) / -face->point_indexes[0]->z), ((face->point_indexes[0]->y) / -face->point_indexes[0]->z));
                     Point2D projectedB(((face->point_indexes[1]->x) / -face->point_indexes[1]->z), ((face->point_indexes[1]->y) / -face->point_indexes[1]->z));
                     Point2D projectedC(((face->point_indexes[2]->x) / -face->point_indexes[2]->z), ((face->point_indexes[2]->y) / -face->point_indexes[2]->z));
@@ -480,18 +589,12 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             }
 
 
-
-
-
             double xRange = abs(xMax - xMin);
             cout << xRange << endl;
             double yRange = abs(yMax - yMin);
 
             double imageX = configuration["General"]["size"].as_double_or_die() *(xRange/max(xRange,yRange));
             double imageY = configuration["General"]["size"].as_double_or_die() *(yRange/max(xRange,yRange));
-
-
-
 
             double d = 0.95 * (imageX / xRange);
             double dcX = d*(xMin+xMax)/2;
@@ -506,16 +609,16 @@ img::EasyImage generate_image(const ini::Configuration &configuration) {
             img::EasyImage image(imageX,imageY);
 
             for (auto & figure: allFigures) {
-                figure.triangulateAll();
+                figure->triangulateAll();
             }
 
 
 
             ZBuffer zbuffer(image.get_width(),image.get_height());
             for (const auto& figure: allFigures) {
-                for (auto face: figure.faces) {
+                for (auto face: figure->faces) {
                     vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
-                    img::Color imgColor(figure.color.red, figure.color.green, figure.color.blue);
+                    img::Color imgColor(figure->color.red, figure->color.green, figure->color.blue);
                     image.draw_zbuf_triag(zbuffer,face->point_indexes[0],face->point_indexes[1],face->point_indexes[2],d,dx,dy,imgColor);
                 }
             }
@@ -558,7 +661,12 @@ int main(int argc, char const* argv[])
                                 continue;
                         }
 
+                        auto start = std::chrono::high_resolution_clock::now();
                         img::EasyImage image = generate_image(conf);
+                        auto end = std::chrono::high_resolution_clock::now();
+                        auto time_taken = end-start;
+                        cout << "Time taken:" << time_taken/std::chrono::milliseconds(1) << endl;
+                        //img::EasyImage image = generate_image(conf);
                         if(image.get_height() > 0 && image.get_width() > 0)
                         {
                                 std::string fileName(argv[i]);

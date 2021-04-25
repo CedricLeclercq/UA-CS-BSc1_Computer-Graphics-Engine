@@ -3,6 +3,7 @@
 //
 
 #include "Figure.h"
+#include "../Utilities/Utils.h"
 
 // Scaling
 void Figure::scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye, double scale, double rotateX, double rotateY, double rotateZ) {
@@ -37,6 +38,7 @@ Matrix Figure::scalefigure(const double scale) {
 
 // Draw figures
 void Figure::drawCube() {
+    this->figureClass = Cube;
 
 
     // Creating all the points
@@ -95,6 +97,7 @@ void Figure::drawCube() {
     }
 }
 void Figure::drawTetrahedron() {
+    this->figureClass = Tetrahedron;
 
     // Creating the points
     auto * point1 = new Vector3D;
@@ -132,6 +135,7 @@ void Figure::drawTetrahedron() {
 
 }
 void Figure::drawOctahedron() {
+    this->figureClass = Octahedron;
 
     // Creating all the points
     auto * point1 = new Vector3D;
@@ -183,6 +187,7 @@ void Figure::drawOctahedron() {
 
 }
 void Figure::drawIcosahedron() {
+    this->figureClass = Icosahedron;
 
     // Creating first point
     auto * point1 = new Vector3D;
@@ -273,6 +278,7 @@ void Figure::drawIcosahedron() {
     }
 }
 void Figure::drawDodecahedron() {
+    this->figureClass = Dodecahedron;
 
     // Creating iso points
     auto * pointI1 = new Vector3D;
@@ -440,6 +446,7 @@ void Figure::drawDodecahedron() {
      */
 }
 void Figure::drawCone(const int n, const double h) {
+    this->figureClass = Cone;
 
     auto * topPoint = new Vector3D;
     topPoint->x = 0; topPoint->y = 0; topPoint->z = h;
@@ -475,6 +482,7 @@ void Figure::drawCone(const int n, const double h) {
 
 }
 void Figure::drawCylinder(const int n, const double h) {
+    this->figureClass = Cylinder;
 
     Vector3D * previousPointDown = nullptr;
     Vector3D * previousPointUp = nullptr;
@@ -519,6 +527,7 @@ void Figure::drawCylinder(const int n, const double h) {
 void Figure::drawSphere(const double radius, const int n) {
 
     this->drawIcosahedron();
+    this->figureClass = Sphere;
 
     if (n != 0) {
         this->lines.clear();
@@ -578,6 +587,7 @@ void Figure::drawSphere(const double radius, const int n) {
     }
 }
 void Figure::drawTorus(const double r, const double R, const int n, const int m) {
+    this->figureClass = Torus;
 
     //vector<pair<Vector3D*,pair<int,int>>> pointTracker = {}; // Vector that keeps all the points and the i and j they are linked to
     vector<pair<Vector3D*,pair<int,int>>> firstCircle = {}; // All pairs that have i = 0;
@@ -781,6 +791,8 @@ void Figure::triangulate(const Face * face) {
         this->faces.push_back(newFace);
     }
 }
+
+
 Point2D Figure::doProjection(const Vector3D * point, const double d) {
 
     Point2D point2D;
@@ -822,6 +834,92 @@ void Figure::triangulateAll() {
     this->faces.clear();
     for (auto face: newFaces) {
         this->faces.push_back(face);
+    }
+}
+
+vector<Figure*> Figure::fractalGen(const vector<Figure*>& allFractals, int nr_iterations, const double scale) {
+    if (nr_iterations == 0) {
+        return allFractals;
+    } else {
+        nr_iterations -= 1;
+        vector<Figure*> currentNew;
+        for (auto &figure: allFractals) {
+            vector<Figure*> toAdd = figure->generateFract(scale);
+            Utils::addToVector(currentNew, toAdd); // = figure->generateFract(scale);
+        } return this->fractalGen(currentNew, nr_iterations, scale * 2);
+    }
+}
+
+vector<Figure*> Figure::generateFract(const double scale) {
+
+    vector<Figure*> fractals; // Vector with all the fractals
+
+    for (auto point: this->points) {
+        auto * newFractal = new Figure;
+        newFractal->identifyAndDraw(this->figureClass);
+        //newFractal->drawCube();
+        newFractal->applyTransformation(*newFractal,newFractal->scalefigure(1/scale));
+        newFractal->applyTransformation(*newFractal,newFractal->translate(*point));
+        fractals.push_back(newFractal);
+    }
+    return fractals;
+}
+
+vector<Figure*> Figure::generateFractal(int nr_iterations, const double scale) {
+
+    return this->fractalGen({this},nr_iterations,scale);
+
+    /*
+    vector<Figure*> fractals; // Vector with all the fractals
+
+
+    for (int i = 0; i < nr_iterations; i++) {
+        if (i == 0) {
+            for (auto &point: this->points) {
+                auto * newFractal = new Figure;
+                newFractal->identifyAndDraw(this->figureClass);
+                //newFractal->drawCube();
+                newFractal->applyTransformation(*newFractal,newFractal->scalefigure(1/scale));
+                newFractal->applyTransformation(*newFractal,newFractal->translate(*point));
+                fractals.push_back(newFractal);
+            }
+        } else {
+            vector<Figure*> newFractals;
+            for (auto fractal: fractals) {
+                for (const auto &point: fractal->points) {
+                    auto * newFractal = new Figure;
+                    //newFractal->drawCube();
+                    newFractal->identifyAndDraw(fractal->figureClass);
+                    newFractal->applyTransformation(*newFractal,newFractal->scalefigure(1/scale));
+                    newFractal->applyTransformation(*newFractal,newFractal->translate(*point));
+                    newFractals.push_back(newFractal);
+                }
+            }
+            fractals.clear();
+            for (auto &fractal: newFractals) {
+                fractals.push_back(fractal);
+            } newFractals.clear();
+
+            //fractals = newFractals;
+        }
+    }
+
+
+     return fractals;
+     */
+}
+// enum Class {Cube,Tetrahedron,Octahedron,Dodecahedron,Cone,Cylinder,Sphere,Torus, Icosahedron};
+void Figure::identifyAndDraw(enum Class figure) {
+    if (figure == Cube) {
+        this->drawCube();
+    } else if (figure == Tetrahedron) {
+        this->drawTetrahedron();
+    } else if (figure == Octahedron) {
+        this->drawOctahedron();
+    } else if (figure == Dodecahedron) {
+        this->drawDodecahedron();
+    } else if (figure == Icosahedron) {
+        this->drawIcosahedron();
     }
 }
 
