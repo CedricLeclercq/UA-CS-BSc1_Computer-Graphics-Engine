@@ -22,9 +22,9 @@
 #include <iostream>
 #include <cmath>
 #include <list>
-#include "../2Dobjects/Line2D.h"
+#include "../Lines/Line2D.h"
 #include "../Zbuffering/ZBuffer.h"
-#include "../3Dobjects/vector3d.h"
+#include "../Lines/vector3d.h"
 
 using namespace std;
 using Lines2D = std::list<Line2D>;

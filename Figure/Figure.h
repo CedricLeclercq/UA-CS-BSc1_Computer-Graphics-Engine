@@ -6,9 +6,9 @@
 #define ENGINE_FIGURE_H
 
 #include "Face.h"
-#include "../3Dobjects/vector3d.h"
+#include "../Lines/vector3d.h"
 #include "../Utilities/Color.h"
-#include "../2Dobjects/Point2D.h"
+#include "../Lines/Point2D.h"
 #include <list>
 
 enum Class {Cube,Tetrahedron,Octahedron,Dodecahedron,Cone,Cylinder,Sphere,Torus, Icosahedron};

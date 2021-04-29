@@ -846,7 +846,7 @@ vector<Figure*> Figure::fractalGen(const vector<Figure*>& allFractals, int nr_it
         for (auto &figure: allFractals) {
             vector<Figure*> toAdd = figure->generateFract(scale);
             Utils::addToVector(currentNew, toAdd); // = figure->generateFract(scale);
-        } return this->fractalGen(currentNew, nr_iterations, scale * 2);
+        } return this->fractalGen(currentNew, nr_iterations, scale * 2); // TODO scale moet aangepast worden per iteratie maar ik weet niet hoe, alvast niet * 2
     }
 }
 

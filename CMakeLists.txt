@@ -17,12 +17,13 @@ set(engine_sources
 		Utilities/easy_image.cc
 	engine.cc
 		Utilities/ini_configuration.cc
-		2Dobjects/Point2D.cpp
+		Lsystems/l_parser.cc
+		Lines/Point2D.cpp
         Figure/Face.cpp
-        3Dobjects/vector3d.cc
-        2Dobjects/Line2D.cpp
+		Lines/vector3d.cc
+		Lines/Line2D.cpp
 		Utilities/Color.cpp
-		Utilities/Utils.cpp Utilities/Utils.h)
+		Utilities/Utils.cpp Utilities/Utils.h Lsystems/LSystemUtils.cpp Lsystems/LSystemUtils.h)
 
 ############################################################
 # Create an executable
