@@ -1,6 +1,6 @@
 #include "Lines/Line2D.h"
 #include "Figure/Figure.cpp"
-#include "Zbuffering/ZBuffer.cpp"
+#include "ExtraFeatures/ZBuffer.cpp"
 #include "Utilities/Utils.h"
 
 #include <iostream>
@@ -44,7 +44,7 @@ int main(int argc, char const* argv[])
                         img::EasyImage image = Utils::generate_image(conf);
                         auto end = std::chrono::high_resolution_clock::now();
                         auto time_taken = end-start;
-                        cout << "Time taken:" << time_taken/std::chrono::milliseconds(1) << endl;
+                        cout << "Time taken: " << time_taken/std::chrono::milliseconds(1) << endl;
                         //img::EasyImage image = generate_image(conf);
                         if(image.get_height() > 0 && image.get_width() > 0)
                         {

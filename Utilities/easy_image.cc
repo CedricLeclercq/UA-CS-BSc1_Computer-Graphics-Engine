@@ -23,7 +23,7 @@
 #include <cmath>
 #include <list>
 #include "../Lines/Line2D.h"
-#include "../Zbuffering/ZBuffer.h"
+#include "../ExtraFeatures//ZBuffer.h"
 #include "../Lines/vector3d.h"
 
 using namespace std;

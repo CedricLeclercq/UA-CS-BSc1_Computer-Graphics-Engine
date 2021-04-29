@@ -10,6 +10,7 @@
 #include "ini_configuration.h"
 #include "../Lsystems/l_parser.h"
 #include "../Lsystems/LSystemUtils.h"
+#include "../Figure/FigureUtils.h"
 
 #include <fstream>
 #include <iostream>
@@ -24,8 +25,6 @@ public:
      * @return  image to draw
      */
     static img::EasyImage generate_image(const ini::Configuration &configuration);
-
-
     /**
      * Filters out a figure out of a vector of figures
      * @param allFiguresconst
@@ -50,6 +49,28 @@ public:
     static img::EasyImage draw2DLines (const Lines2D &lines, int size, const vector<double>& backgroundColor, bool zBuffering);
 
     static void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color);
+
+
+    template<typename T>
+    static bool contains(const std::vector<T> &vector, const T& element) {
+        typedef typename std::vector<T>::const_iterator vectorIter;
+        for (vectorIter iter = vector.begin(); iter != vector.end(); iter++) {
+            if (*iter == element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template<typename T>
+    static void replace(std::vector<T>& vector, const T& element, const T& secondElement) {
+        typedef typename std::vector<T>::iterator vectorIter;
+        for (vectorIter iter = vector.begin(); iter != vector.end(); iter++) {
+            if (*iter == element) {
+                (*iter) = secondElement;
+            }
+        }
+    }
 
 
 

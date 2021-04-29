@@ -12,7 +12,11 @@ public:
 
     Point2D()=default;
 
-    Point2D(double newx, double newy);
+    Point2D(double newx, double newy) {
+        x = newx;
+        y = newy;
+    }
+
 };
 
 

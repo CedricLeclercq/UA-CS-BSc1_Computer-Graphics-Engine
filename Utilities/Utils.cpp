@@ -96,7 +96,8 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
 
                     iterator++;
                 }
-                figure.scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                Figure * figurePointer = &figure;
+                FigureUtils::scaleTranslateEye(figurePointer,centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                 Utils::convert3D(figure,lines2D,color);
             }
 
@@ -110,16 +111,20 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Drawing Fractal cube
             if (configuration[figureName]["type"].as_string_or_die() == "FractalCube") {
                 figure->drawCube();
+                //figure->scalefigure(configuration[figureName]["fractalScale"].as_int_or_die());
                 if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
-                    vector<Figure *> newFigures = figure->generateFractal(
+                    vector<Figure *> newFigures = figure->fractals(
                             configuration[figureName]["nrIterations"].as_int_or_die(),
                             configuration[figureName]["fractalScale"].as_int_or_die());
 
 
                     for (auto & figureIt: newFigures) {
-                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        FigureUtils::scaleTranslateEye(figureIt, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                         Utils::convert3D(*figureIt, lines2D, color);
                         allFigures.push_back(figureIt);
+                    }
+                    if (newFigures.empty()) {
+                        allFigures.push_back(figure);
                     }
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
@@ -135,16 +140,20 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Drawing a Fractal Tetrahedron
             if (configuration[figureName]["type"].as_string_or_die() == "FractalTetrahedron") {
                 figure->drawTetrahedron();
+                //figure->scalefigure(configuration[figureName]["fractalScale"].as_int_or_die());
                 if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
-                    vector<Figure *> newFigures = figure->generateFractal(
+                    vector<Figure *> newFigures = figure->fractals(
                             configuration[figureName]["nrIterations"].as_int_or_die(),
                             configuration[figureName]["fractalScale"].as_int_or_die());
 
 
                     for (auto & figureIt: newFigures) {
-                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        FigureUtils::scaleTranslateEye(figureIt, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                         Utils::convert3D(*figureIt, lines2D, color);
                         allFigures.push_back(figureIt);
+                    }
+                    if (newFigures.empty()) {
+                        allFigures.push_back(figure);
                     }
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
@@ -161,16 +170,20 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Drawing Fractal Octahedron
             if (configuration[figureName]["type"].as_string_or_die() == "FractalOctahedron") {
                 figure->drawOctahedron();
+                //figure->scalefigure(configuration[figureName]["fractalScale"].as_int_or_die());
                 if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
-                    vector<Figure *> newFigures = figure->generateFractal(
+                    vector<Figure *> newFigures = figure->fractals(
                             configuration[figureName]["nrIterations"].as_int_or_die(),
                             configuration[figureName]["fractalScale"].as_int_or_die());
 
 
                     for (auto & figureIt: newFigures) {
-                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        FigureUtils::scaleTranslateEye(figureIt, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                         Utils::convert3D(*figureIt, lines2D, color);
                         allFigures.push_back(figureIt);
+                    }
+                    if (newFigures.empty()) {
+                        allFigures.push_back(figure);
                     }
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
@@ -186,16 +199,20 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Drawing fractal Icosahedron
             if (configuration[figureName]["type"].as_string_or_die() == "FractalIcosahedron") {
                 figure->drawIcosahedron();
+                //figure->scalefigure(configuration[figureName]["fractalScale"].as_int_or_die());
                 if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
-                    vector<Figure *> newFigures = figure->generateFractal(
+                    vector<Figure *> newFigures = figure->fractals(
                             configuration[figureName]["nrIterations"].as_int_or_die(),
                             configuration[figureName]["fractalScale"].as_int_or_die());
 
 
                     for (auto & figureIt: newFigures) {
-                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        FigureUtils::scaleTranslateEye(figureIt, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                         Utils::convert3D(*figureIt, lines2D, color);
                         allFigures.push_back(figureIt);
+                    }
+                    if (newFigures.empty()) {
+                        allFigures.push_back(figure);
                     }
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
@@ -211,16 +228,20 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Drawing a Fractal Dodecahedron
             if (configuration[figureName]["type"].as_string_or_die() == "FractalDodecahedron") {
                 figure->drawDodecahedron();
+                //figure->scalefigure(configuration[figureName]["fractalScale"].as_int_or_die());
                 if (configuration[figureName]["nrIterations"].as_int_or_die() > 0) {
-                    vector<Figure *> newFigures = figure->generateFractal(
+                    vector<Figure *> newFigures = figure->fractals(
                             configuration[figureName]["nrIterations"].as_int_or_die(),
                             configuration[figureName]["fractalScale"].as_int_or_die());
 
 
                     for (auto & figureIt: newFigures) {
-                        figureIt->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                        FigureUtils::scaleTranslateEye(figureIt, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
                         Utils::convert3D(*figureIt, lines2D, color);
                         allFigures.push_back(figureIt);
+                    }
+                    if (newFigures.empty()) {
+                        allFigures.push_back(figure);
                     }
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
@@ -240,7 +261,7 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
 
             // Drawing a Sphere
             if (configuration[figureName]["type"].as_string_or_die() == "Sphere") {
-                figure->drawSphere(0,configuration[figureName]["n"].as_int_or_die());
+                figure->drawSphere(configuration[figureName]["n"].as_int_or_die());
             }
 
             // Drawing a Torus
@@ -252,7 +273,7 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             // Scaling and converting to 3D
             string type = configuration[figureName]["type"].as_string_or_die();
             if (type != "FractalCube" and type != "FractalTetrahedron" and type != "FractalOctahedron" and type != "FractalIcosahedron" and type != "FractalDodecahedron") {
-                figure->scaleTranslateEye(centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
+                FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
                 if (typeString != "ZBuffering") {
                     Utils::convert3D(*figure, lines2D, color);
                 }
@@ -472,8 +493,8 @@ img::EasyImage Utils::draw2DLines (const Lines2D &lines, const int size, const v
 void Utils::convert3D(Figure &figure, Lines2D &lines2D, vector<double> color) {
     for (auto &line3D: figure.lines) {
         Line2D line2D;
-        line2D.p1 = figure.doProjection(line3D.first, 1);
-        line2D.p2 = figure.doProjection(line3D.second, 1);
+        line2D.p1 = FigureUtils::doProjection(line3D.first, 1);
+        line2D.p2 = FigureUtils::doProjection(line3D.second, 1);
         line2D.z = make_pair(line3D.first->z,line3D.second->z);
         line2D.color.red = color[0] * 255;
         line2D.color.green = color[1] * 255;

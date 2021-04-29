@@ -8,7 +8,7 @@
 
 class Color {
 public:
-    double red,green,blue;
+    double red,green,blue; // Colors of the figure in RGB format
 
 };
 

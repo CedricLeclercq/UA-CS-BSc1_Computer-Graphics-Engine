@@ -5,7 +5,7 @@
 #ifndef ENGINE_LINE2D_H
 #define ENGINE_LINE2D_H
 #include "Point2D.h"
-#include "../Utilities/Color.h"
+#include "../Figure/Color.h"
 #include <limits>
 #include <utility>
 using namespace std;

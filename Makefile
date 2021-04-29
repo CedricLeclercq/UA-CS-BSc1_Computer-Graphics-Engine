@@ -188,87 +188,6 @@ engine/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/build
 .PHONY : engine/fast
 
-Figure/Face.o: Figure/Face.cpp.o
-
-.PHONY : Figure/Face.o
-
-# target to build an object file
-Figure/Face.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Face.cpp.o
-.PHONY : Figure/Face.cpp.o
-
-Figure/Face.i: Figure/Face.cpp.i
-
-.PHONY : Figure/Face.i
-
-# target to preprocess a source file
-Figure/Face.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Face.cpp.i
-.PHONY : Figure/Face.cpp.i
-
-Figure/Face.s: Figure/Face.cpp.s
-
-.PHONY : Figure/Face.s
-
-# target to generate assembly for a file
-Figure/Face.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Face.cpp.s
-.PHONY : Figure/Face.cpp.s
-
-Lines/Line2D.o: Lines/Line2D.cpp.o
-
-.PHONY : Lines/Line2D.o
-
-# target to build an object file
-Lines/Line2D.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Line2D.cpp.o
-.PHONY : Lines/Line2D.cpp.o
-
-Lines/Line2D.i: Lines/Line2D.cpp.i
-
-.PHONY : Lines/Line2D.i
-
-# target to preprocess a source file
-Lines/Line2D.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Line2D.cpp.i
-.PHONY : Lines/Line2D.cpp.i
-
-Lines/Line2D.s: Lines/Line2D.cpp.s
-
-.PHONY : Lines/Line2D.s
-
-# target to generate assembly for a file
-Lines/Line2D.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Line2D.cpp.s
-.PHONY : Lines/Line2D.cpp.s
-
-Lines/Point2D.o: Lines/Point2D.cpp.o
-
-.PHONY : Lines/Point2D.o
-
-# target to build an object file
-Lines/Point2D.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Point2D.cpp.o
-.PHONY : Lines/Point2D.cpp.o
-
-Lines/Point2D.i: Lines/Point2D.cpp.i
-
-.PHONY : Lines/Point2D.i
-
-# target to preprocess a source file
-Lines/Point2D.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Point2D.cpp.i
-.PHONY : Lines/Point2D.cpp.i
-
-Lines/Point2D.s: Lines/Point2D.cpp.s
-
-.PHONY : Lines/Point2D.s
-
-# target to generate assembly for a file
-Lines/Point2D.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/Point2D.cpp.s
-.PHONY : Lines/Point2D.cpp.s
-
 Lines/vector3d.o: Lines/vector3d.cc.o
 
 .PHONY : Lines/vector3d.o
@@ -349,33 +268,6 @@ Lsystems/l_parser.s: Lsystems/l_parser.cc.s
 Lsystems/l_parser.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/l_parser.cc.s
 .PHONY : Lsystems/l_parser.cc.s
-
-Utilities/Color.o: Utilities/Color.cpp.o
-
-.PHONY : Utilities/Color.o
-
-# target to build an object file
-Utilities/Color.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Color.cpp.o
-.PHONY : Utilities/Color.cpp.o
-
-Utilities/Color.i: Utilities/Color.cpp.i
-
-.PHONY : Utilities/Color.i
-
-# target to preprocess a source file
-Utilities/Color.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Color.cpp.i
-.PHONY : Utilities/Color.cpp.i
-
-Utilities/Color.s: Utilities/Color.cpp.s
-
-.PHONY : Utilities/Color.s
-
-# target to generate assembly for a file
-Utilities/Color.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Color.cpp.s
-.PHONY : Utilities/Color.cpp.s
 
 Utilities/Utils.o: Utilities/Utils.cpp.o
 
@@ -498,15 +390,6 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... engine"
-	@echo "... Figure/Face.o"
-	@echo "... Figure/Face.i"
-	@echo "... Figure/Face.s"
-	@echo "... Lines/Line2D.o"
-	@echo "... Lines/Line2D.i"
-	@echo "... Lines/Line2D.s"
-	@echo "... Lines/Point2D.o"
-	@echo "... Lines/Point2D.i"
-	@echo "... Lines/Point2D.s"
 	@echo "... Lines/vector3d.o"
 	@echo "... Lines/vector3d.i"
 	@echo "... Lines/vector3d.s"
@@ -516,9 +399,6 @@ help:
 	@echo "... Lsystems/l_parser.o"
 	@echo "... Lsystems/l_parser.i"
 	@echo "... Lsystems/l_parser.s"
-	@echo "... Utilities/Color.o"
-	@echo "... Utilities/Color.i"
-	@echo "... Utilities/Color.s"
 	@echo "... Utilities/Utils.o"
 	@echo "... Utilities/Utils.i"
 	@echo "... Utilities/Utils.s"

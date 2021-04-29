@@ -18,12 +18,8 @@ set(engine_sources
 	engine.cc
 		Utilities/ini_configuration.cc
 		Lsystems/l_parser.cc
-		Lines/Point2D.cpp
-        Figure/Face.cpp
 		Lines/vector3d.cc
-		Lines/Line2D.cpp
-		Utilities/Color.cpp
-		Utilities/Utils.cpp Utilities/Utils.h Lsystems/LSystemUtils.cpp Lsystems/LSystemUtils.h)
+		Utilities/Utils.cpp Utilities/Utils.h Lsystems/LSystemUtils.cpp Lsystems/LSystemUtils.h ExtraFeatures/ViewFrustum.h Figure/FigureDrawer.h Figure/FigureUtils.h)
 
 ############################################################
 # Create an executable
