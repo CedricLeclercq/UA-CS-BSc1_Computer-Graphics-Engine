@@ -67,10 +67,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils"
+CMAKE_SOURCE_DIR = /Users/cedricleclercq/Desktop/utils
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils"
+CMAKE_BINARY_DIR = /Users/cedricleclercq/Desktop/utils
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -145,9 +145,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/CMakeFiles" "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils//CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/cedricleclercq/Desktop/utils/CMakeFiles /Users/cedricleclercq/Desktop/utils//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/cedricleclercq/Desktop/utils/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
