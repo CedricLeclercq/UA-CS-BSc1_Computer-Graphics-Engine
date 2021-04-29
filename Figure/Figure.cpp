@@ -488,6 +488,9 @@ void Figure::drawCylinder(const int n, const double h) {
     Vector3D * previousPointUp = nullptr;
     Vector3D * firstPointDown = nullptr;
     Vector3D * firstPointUp = nullptr;
+
+    vector<Vector3D*> upperPoints;
+    vector<Vector3D*> downPoints;
     //auto * faceTop = new Face({});
     //auto * faceBottom = new Face({});
     for (int i = 0; i < n; i++) {
@@ -505,6 +508,8 @@ void Figure::drawCylinder(const int n, const double h) {
             this->faces.push_back(newFace);
         }
 
+        upperPoints.push_back(newPointUp);
+        downPoints.push_back(newPointDown);
         this->points.push_back(newPointUp);
         this->points.push_back(newPointDown);
         previousPointUp = newPointUp;
@@ -515,7 +520,11 @@ void Figure::drawCylinder(const int n, const double h) {
     }
 
     auto * newFace = new Face({previousPointDown,previousPointUp,firstPointUp,firstPointDown});
+    auto * upperFace = new Face(upperPoints);
+    auto * lowerFace = new Face(downPoints);
     this->faces.push_back(newFace);
+    this->faces.push_back(upperFace);
+    this->faces.push_back(lowerFace);
 
     for (auto face: this->faces) {
         this->lines.emplace_back(face->point_indexes[0],face->point_indexes[1]);

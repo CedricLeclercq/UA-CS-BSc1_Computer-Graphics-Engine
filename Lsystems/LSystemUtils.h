@@ -28,8 +28,12 @@ public:
     static string recursiveInitiator(const LParser::LSystem2D &sys, const string &initiator, unsigned int nrOfIterations);
 
 
-    static img::EasyImage
-    LSystem2D(const LParser::LSystem2D &sys, const vector<double> &backgroundColor, int size, vector<double> lineColor);
+    static img::EasyImage LSystem2D(const LParser::LSystem2D &sys, const vector<double> &backgroundColor, int size, vector<double> lineColor);
+
+    static string recursiveInitiator3D(const LParser::LSystem3D& sys, const string& initiator, unsigned int nrOfIterations);
+
+    // TODO afwerken
+    static img::EasyImage LSystem3D(const LParser::LSystem3D& sys, const vector<double>& backgroundColor, int size, const vector<double>& lineColor);
 };
 
 

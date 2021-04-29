@@ -100,3 +100,69 @@ img::EasyImage LSystemUtils::LSystem2D(const LParser::LSystem2D&  sys, const vec
     img::EasyImage image = Utils::draw2DLines(lines,size, backgroundColor, false);
     return image;
 }
+
+string LSystemUtils::recursiveInitiator3D(const LParser::LSystem3D &sys, const string &initiator,
+                                          unsigned int nrOfIterations) {
+    string result;
+
+    for (char k: initiator) {
+        if (k != '-' and k != '+' and k != '(' and k != ')' and k != '/' and k != '\\' and k != '&' and k != '|' and k != '^') {
+            if (nrOfIterations != 0) {
+                const string& newString = sys.get_replacement(k);
+                result += newString;
+            }
+        } else if (k == '-') { result += '-';}
+        else if (k == '+') { result += '+';}
+        else if (k == '(') { result += '(';}
+        else if (k == ')') { result += ')';}
+        else if (k == '/') { result += '/';}
+        else if (k == '\\') { result += '\\';}
+        else if (k == '&') { result += '&'; }
+        else if (k == '|') { result += '|'; }
+        else { result += '^'; }
+    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl;
+
+    if (nrOfIterations != 0) {
+        result = recursiveInitiator3D(sys,result,nrOfIterations);
+    }
+
+    return result;
+}
+
+img::EasyImage LSystemUtils::LSystem3D(const LParser::LSystem3D &sys, const vector<double> &backgroundColor, int size,
+                                       const vector<double>& lineColor) {
+    double currentAngle = sys.get_angle() * M_PI / 180;
+    const string& initiator = sys.get_initiator();
+
+    string fullString = LSystemUtils::recursiveInitiator3D(sys,initiator,sys.get_nr_iterations());
+
+    auto * currentXYZ = new Vector3D;
+    currentXYZ->x = 0; currentXYZ->y = 0; currentXYZ->z = 0;
+    stack<pair<Vector3D*,double>> stack;
+
+    for (char letter: fullString) {
+        if (letter == '(') {
+            stack.push(make_pair(currentXYZ,currentAngle));
+
+        } else if (letter == ')') {
+            currentXYZ = stack.top().first;
+            currentAngle = stack.top().second;
+            stack.pop();
+
+        } else if (letter == '|') {
+
+
+        } else if (letter == '^') {
+
+
+        } else if (letter == '&') {
+
+        } else if (letter == '/') {
+
+        } else if (letter == '\\') {
+
+        } else {
+
+        }
+    }
+}
