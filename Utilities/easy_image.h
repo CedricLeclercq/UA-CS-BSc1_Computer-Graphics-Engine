@@ -23,8 +23,13 @@
 #include <cmath>
 #include <list>
 #include "../Lines/Line2D.h"
-#include "../ExtraFeatures//ZBuffer.h"
+#include "../ExtraFeatures/ZBuffer.h"
 #include "../Lines/vector3d.h"
+class InfLight;
+class PointLight;
+class Light;
+typedef std::vector<Light*> Lights3D; // Vector with light pointers
+
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -246,7 +251,7 @@ namespace img
              * 	assert(x1 < getWidth())
              * 	assert(y1 < getHeight())
              */
-            void draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, const double z0, double x1, double y1, const double z1, const Color& color);
+            void draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, const double z0, double x1, double y1, const double z1, const Color& c);
 
 
             /**
@@ -260,7 +265,18 @@ namespace img
              * @param dy        offset dy
              * @param color     color needed
              */
-            void draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vector3D const * B, Vector3D const * C, double d, double dx, double dy, const Color& color);
+            void draw_zbuf_triag(ZBuffer & zBuffer,
+                                 Vector3D const * A,
+                                 Vector3D const * B,
+                                 Vector3D const * C,
+                                 double d,
+                                 double dx,
+                                 double dy,
+                                 const Color& ambientLight,
+                                 const Color& diffuseReflection,
+                                 const Color& specularReflection,
+                                 const double reflectionCo,
+                                 Lights3D& lights);
 
 
     private:

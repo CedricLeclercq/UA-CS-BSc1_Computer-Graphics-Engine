@@ -20,14 +20,15 @@
 #include <assert.h>
 #include <math.h>
 #include <iostream>
-#include <cmath>
 #include <list>
-#include "../Lines/Line2D.h"
-#include "../ExtraFeatures//ZBuffer.h"
-#include "../Lines/vector3d.h"
+#include "../ExtraFeatures/InfPointLight.h"
+
+
+
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
+//typedef std::vector<Light*> Lights3D; // Vector with light pointers
 
 inline int roundToInt(double d) { return static_cast<int>(round(d)); }
 
@@ -367,8 +368,10 @@ void img::EasyImage::draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, dou
         }
     }
 }
-void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vector3D const * B, Vector3D const * C, double d, double dx, double dy, const Color& color) {
-
+void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector3D const * B,Vector3D const * C,
+                                     double d,double dx,double dy,const Color& ambientLightReflection,
+                                     const Color& diffuseReflection,const Color& specularReflection, const double reflectionCo,
+                                     Lights3D& lights) {
 
     // Some assertions apply
     assert(A->x < this->width && A->y < this->height);
@@ -397,32 +400,60 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vect
     w.y = u.z * v.x - u.x * v.z;
     w.z = u.x * v.y - u.y * v.x;
 
-        // Calculating k
-    double k = w.x * A->x + w.y * A->y + w.z * A->z;
+    Color finalColor(1,1,1); // Final color a pixel will get
 
+    // Applying light
+    for (auto &light: lights) {
+        // Applying ambient light
+        // TODO fix small inaccuracy - see sent mail
+        finalColor.red += light->ambientLight.red * 255 * ambientLightReflection.red; // ... to red
+        finalColor.blue += light->ambientLight.blue * 255 * ambientLightReflection.blue; // ... to blue
+        finalColor.green += light->ambientLight.green * 255 * ambientLightReflection.green; // ... to green
+    }
+    for (auto &light: lights) {
+        if (light->lightClass == Infinity) {
+            // C++ wants me to dynamic_cast, but when I do, it gives the opposite error to static_cast so now im scared
+            auto * inftyLight = static_cast<InfLight*>(light); // Casting to access derivative class member variables
+
+            // First applying the diffuse light
+            Vector3D l = inftyLight->ldVector; // Creating l vector
+            l.x = -l.x; l.y = -l.y; l.z = -l.z; // Creating l with the right values
+            Vector3D n = Vector3D::normalise(w); // Normalising
+            //double divValue = sqrt(pow(w.x,2) + pow(w.y,2) + pow(w.z,2)); // Manually normalisation
+            //n.x = n.x / divValue; n.y = n.y / divValue; n.z = n.z / divValue; // Manual normalisation
+            double cosAlpha = n.x * l.x + n.y * l.y + n.z * l.z; // Calculating cosAlpha
+            if (cosAlpha > 0) {
+                // Else no diffuse light :(, but if cosAlpha > 0 we :), applying diffuse light
+                finalColor.red +=  inftyLight->diffuseLight.red * diffuseReflection.red * cosAlpha; // ... to red
+                finalColor.blue +=  inftyLight->diffuseLight.blue * diffuseReflection.blue * cosAlpha; // ... to blue
+                finalColor.green += inftyLight->diffuseLight.green * diffuseReflection.green * cosAlpha; // ... to green
+            }
+
+            // Now applying specular light
+            double cosBeta = 3; // TODO calculate, how?
+            double cosBetaMS = pow(cosBeta,reflectionCo); // Doing the cosine of beta to the power of M_s
+            if (cosBetaMS > 0) {
+                finalColor.red += inftyLight->specularLight.red * specularReflection.red * cosBetaMS;
+                finalColor.blue += inftyLight->specularLight.blue * specularReflection.blue * cosBetaMS;
+                finalColor.green += inftyLight->specularLight.green * specularReflection.green * cosBetaMS;
+            }
+
+
+        }  // If the light is not a point or infinity, leave it out, this light came into this engine ILLEGALLY
+    }
+    // Calculating k
+    double k = w.x * A->x + w.y * A->y + w.z * A->z;
         // Combining previous calculations to DzDx and DzDy
     double DzDx = w.x / (-d * k);
     double DzDy = w.y / (-d * k);
-
     // Step 3: Calculating yMin and yMax for the iteration later
     int yMin = roundToInt(min(projectedA.y,min(projectedB.y,projectedC.y)) -0.5);
     int yMax = roundToInt(max(projectedA.y,max(projectedB.y,projectedC.y)) +0.5);
-
-
-
     // Step 4: looping
     for (int y = yMin; y < yMax + 1; y++) {
-
             //Initialise all the Xl and Xr
         double Xl_AB = numeric_limits<double>::infinity(), Xl_AC = numeric_limits<double>::infinity(), Xl_BC = numeric_limits<double>::infinity();
         double Xr_AB = -numeric_limits<double>::infinity(), Xr_AC = -numeric_limits<double>::infinity(), Xr_BC = -numeric_limits<double>::infinity();
-
-        //if (projectedA.y != projectedC.y) {
-            // Algorithm needs A and C to lay on the same horizontal line
-            //std::swap(projectedB.x,projectedC.x);
-            //std::swap(projectedB.y,projectedC.y);
-        //}
-
         if ((y - projectedA.y)*(y - projectedB.y) <= 0 and projectedA.y != projectedB.y) {
             // AB
             double Xi = (projectedB.x + (projectedA.x - projectedB.x) * ((double)y - projectedB.y)/(projectedA.y - projectedB.y));
@@ -447,15 +478,39 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer, Vector3D const * A, Vect
         int Xl = roundToInt(min(Xl_AB,min(Xl_AC,Xl_BC)) + 0.5);
         int Xr = roundToInt(max(Xr_AB,max(Xr_AC,Xr_BC)) - 0.5);
 
-
-
-
         if (Xl >= 0 and Xr >= 0) {
             for (int x = Xl; x < Xr + 1; x++) {
                 double oneOverZ = 1.0001 * oneOverZg + ((double) x - Xg) * DzDx + ((double) y - Yg) * DzDy;
                 if (zBuffer[x][y] > oneOverZ) {
                     zBuffer[x][y] = oneOverZ;
-                    (*this)(x, y) = color;
+                    Color saveColor = finalColor;
+                    // Adjusting color for point lights
+                    // TODO spots?
+                    for (auto &light: lights) {
+                        if (light->lightClass == Point) {
+                            auto * pointLight = static_cast<PointLight*>(light);
+                            Vector3D location = pointLight->location;
+                            Vector3D l; l.x = x; l.y = y; l.z = 1/oneOverZ;
+                            // TODO normalise vector?
+                            double cosAlpha = location.x * l.x + location.y * l.y + location.z + l.z;
+                            if (cosAlpha > 0) {
+                                finalColor.red += pointLight->diffuseLight.red * diffuseReflection.red * cosAlpha;
+                                finalColor.blue += pointLight->diffuseLight.blue * diffuseReflection.blue * cosAlpha;
+                                finalColor.green += pointLight->diffuseLight.green * diffuseReflection.green * cosAlpha;
+                            }
+
+                            // Now applying specular light
+                            double cosBeta = 3; // TODO calculate, how?
+                            double cosBetaMS = pow(cosBeta,reflectionCo); // Doing the cosine of beta to the power of M_s
+                            if (cosBetaMS > 0) {
+                                finalColor.red += pointLight->specularLight.red * specularReflection.red * cosBetaMS;
+                                finalColor.blue += pointLight->specularLight.blue * specularReflection.blue * cosBetaMS;
+                                finalColor.green += pointLight->specularLight.green * specularReflection.green * cosBetaMS;
+                            }
+                        }
+                    }
+                    (*this)(x, y) = finalColor;
+                    finalColor = saveColor; // Resetting the final color, else each pixel will start of where the previous one ended
                 }
             }
         }

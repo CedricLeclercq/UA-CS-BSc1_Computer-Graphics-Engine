@@ -134,8 +134,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/local/Cellar/cmake/3.20.0/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -188,6 +188,87 @@ engine/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/build
 .PHONY : engine/fast
 
+ExtraFeatures/Lsystems/LSystemUtils.o: ExtraFeatures/Lsystems/LSystemUtils.cpp.o
+
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.o
+
+# target to build an object file
+ExtraFeatures/Lsystems/LSystemUtils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/LSystemUtils.cpp.o
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.cpp.o
+
+ExtraFeatures/Lsystems/LSystemUtils.i: ExtraFeatures/Lsystems/LSystemUtils.cpp.i
+
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.i
+
+# target to preprocess a source file
+ExtraFeatures/Lsystems/LSystemUtils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/LSystemUtils.cpp.i
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.cpp.i
+
+ExtraFeatures/Lsystems/LSystemUtils.s: ExtraFeatures/Lsystems/LSystemUtils.cpp.s
+
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.s
+
+# target to generate assembly for a file
+ExtraFeatures/Lsystems/LSystemUtils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/LSystemUtils.cpp.s
+.PHONY : ExtraFeatures/Lsystems/LSystemUtils.cpp.s
+
+ExtraFeatures/Lsystems/l_parser.o: ExtraFeatures/Lsystems/l_parser.cc.o
+
+.PHONY : ExtraFeatures/Lsystems/l_parser.o
+
+# target to build an object file
+ExtraFeatures/Lsystems/l_parser.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/l_parser.cc.o
+.PHONY : ExtraFeatures/Lsystems/l_parser.cc.o
+
+ExtraFeatures/Lsystems/l_parser.i: ExtraFeatures/Lsystems/l_parser.cc.i
+
+.PHONY : ExtraFeatures/Lsystems/l_parser.i
+
+# target to preprocess a source file
+ExtraFeatures/Lsystems/l_parser.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/l_parser.cc.i
+.PHONY : ExtraFeatures/Lsystems/l_parser.cc.i
+
+ExtraFeatures/Lsystems/l_parser.s: ExtraFeatures/Lsystems/l_parser.cc.s
+
+.PHONY : ExtraFeatures/Lsystems/l_parser.s
+
+# target to generate assembly for a file
+ExtraFeatures/Lsystems/l_parser.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/ExtraFeatures/Lsystems/l_parser.cc.s
+.PHONY : ExtraFeatures/Lsystems/l_parser.cc.s
+
+Figure/Figure.o: Figure/Figure.cpp.o
+
+.PHONY : Figure/Figure.o
+
+# target to build an object file
+Figure/Figure.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Figure.cpp.o
+.PHONY : Figure/Figure.cpp.o
+
+Figure/Figure.i: Figure/Figure.cpp.i
+
+.PHONY : Figure/Figure.i
+
+# target to preprocess a source file
+Figure/Figure.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Figure.cpp.i
+.PHONY : Figure/Figure.cpp.i
+
+Figure/Figure.s: Figure/Figure.cpp.s
+
+.PHONY : Figure/Figure.s
+
+# target to generate assembly for a file
+Figure/Figure.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Figure.cpp.s
+.PHONY : Figure/Figure.cpp.s
+
 Lines/vector3d.o: Lines/vector3d.cc.o
 
 .PHONY : Lines/vector3d.o
@@ -214,60 +295,6 @@ Lines/vector3d.s: Lines/vector3d.cc.s
 Lines/vector3d.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lines/vector3d.cc.s
 .PHONY : Lines/vector3d.cc.s
-
-Lsystems/LSystemUtils.o: Lsystems/LSystemUtils.cpp.o
-
-.PHONY : Lsystems/LSystemUtils.o
-
-# target to build an object file
-Lsystems/LSystemUtils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/LSystemUtils.cpp.o
-.PHONY : Lsystems/LSystemUtils.cpp.o
-
-Lsystems/LSystemUtils.i: Lsystems/LSystemUtils.cpp.i
-
-.PHONY : Lsystems/LSystemUtils.i
-
-# target to preprocess a source file
-Lsystems/LSystemUtils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/LSystemUtils.cpp.i
-.PHONY : Lsystems/LSystemUtils.cpp.i
-
-Lsystems/LSystemUtils.s: Lsystems/LSystemUtils.cpp.s
-
-.PHONY : Lsystems/LSystemUtils.s
-
-# target to generate assembly for a file
-Lsystems/LSystemUtils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/LSystemUtils.cpp.s
-.PHONY : Lsystems/LSystemUtils.cpp.s
-
-Lsystems/l_parser.o: Lsystems/l_parser.cc.o
-
-.PHONY : Lsystems/l_parser.o
-
-# target to build an object file
-Lsystems/l_parser.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/l_parser.cc.o
-.PHONY : Lsystems/l_parser.cc.o
-
-Lsystems/l_parser.i: Lsystems/l_parser.cc.i
-
-.PHONY : Lsystems/l_parser.i
-
-# target to preprocess a source file
-Lsystems/l_parser.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/l_parser.cc.i
-.PHONY : Lsystems/l_parser.cc.i
-
-Lsystems/l_parser.s: Lsystems/l_parser.cc.s
-
-.PHONY : Lsystems/l_parser.s
-
-# target to generate assembly for a file
-Lsystems/l_parser.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Lsystems/l_parser.cc.s
-.PHONY : Lsystems/l_parser.cc.s
 
 Utilities/Utils.o: Utilities/Utils.cpp.o
 
@@ -390,15 +417,18 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... engine"
+	@echo "... ExtraFeatures/Lsystems/LSystemUtils.o"
+	@echo "... ExtraFeatures/Lsystems/LSystemUtils.i"
+	@echo "... ExtraFeatures/Lsystems/LSystemUtils.s"
+	@echo "... ExtraFeatures/Lsystems/l_parser.o"
+	@echo "... ExtraFeatures/Lsystems/l_parser.i"
+	@echo "... ExtraFeatures/Lsystems/l_parser.s"
+	@echo "... Figure/Figure.o"
+	@echo "... Figure/Figure.i"
+	@echo "... Figure/Figure.s"
 	@echo "... Lines/vector3d.o"
 	@echo "... Lines/vector3d.i"
 	@echo "... Lines/vector3d.s"
-	@echo "... Lsystems/LSystemUtils.o"
-	@echo "... Lsystems/LSystemUtils.i"
-	@echo "... Lsystems/LSystemUtils.s"
-	@echo "... Lsystems/l_parser.o"
-	@echo "... Lsystems/l_parser.i"
-	@echo "... Lsystems/l_parser.s"
 	@echo "... Utilities/Utils.o"
 	@echo "... Utilities/Utils.i"
 	@echo "... Utilities/Utils.s"

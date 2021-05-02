@@ -5,8 +5,6 @@
 #ifndef README_MD_FIGUREDRAWER_H
 #define README_MD_FIGUREDRAWER_H
 
-#endif //README_MD_FIGUREDRAWER_H
-
 class FigureDrawer {
 public:
     // Draw figures
@@ -122,7 +120,7 @@ public:
         point2->x = 0; point2->y = 1; point2->z = 0;
         point3->x = -1; point3->y = 0; point3->z = 0;
         point4->x = 0; point4->y = -1; point4->z = 0;
-        point5->x = 0; point5->y = 0; point5->z = 0;
+        point5->x = 0; point5->y = 0; point5->z = -1;
         point6->x = 0; point6->y = 0; point6->z = 1;
 
         figure->points.push_back(point1);
@@ -642,3 +640,6 @@ public:
         }
     }
 };
+
+#endif //README_MD_FIGUREDRAWER_H
+

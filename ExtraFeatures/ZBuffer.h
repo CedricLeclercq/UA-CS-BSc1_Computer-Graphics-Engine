@@ -5,6 +5,7 @@
 #ifndef README_MD_ZBUFFER_H
 #define README_MD_ZBUFFER_H
 #include <limits>
+#include <vector>
 
 
 class ZBuffer: public std::vector<std::vector<double>> {
@@ -14,9 +15,16 @@ public:
      * \param width     integer for the width of [x][y]
      * \param height    integer for the height of [x][y]
      */
-    ZBuffer(const int width, const int height);
-
-
+    ZBuffer(const int width, const int height) {
+        for (int i = 0; i < width; i++) {
+            vector<double> newVector;
+            newVector.reserve(height);
+            for (int j = 0; j < height; j++) {
+                newVector.push_back(std::numeric_limits<double>::infinity());
+            }
+            this->push_back(newVector);
+        }
+    }
 };
 
 

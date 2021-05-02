@@ -5,15 +5,12 @@
 #ifndef README_MD_UTILS_H
 #define README_MD_UTILS_H
 
-#include "../Figure/Figure.h"
+class Figure;
 #include "../Utilities/easy_image.h"
 #include "ini_configuration.h"
-#include "../Lsystems/l_parser.h"
-#include "../Lsystems/LSystemUtils.h"
-#include "../Figure/FigureUtils.h"
+
 
 #include <fstream>
-#include <iostream>
 
 
 class Utils {
@@ -48,9 +45,22 @@ public:
      */
     static img::EasyImage draw2DLines (const Lines2D &lines, int size, const vector<double>& backgroundColor, bool zBuffering);
 
+    /**
+     * Converts all 3D points of a figure to a 2D points and adds it to a vector
+     * @param figure
+     * @param lines2D
+     * @param color
+     */
     static void convert3D(Figure & figure, Lines2D  & lines2D, vector<double> color);
 
 
+    /**
+     * Checks if a vector contains an element T
+     * @tparam T
+     * @param vector
+     * @param element
+     * @return      contains element
+     */
     template<typename T>
     static bool contains(const std::vector<T> &vector, const T& element) {
         typedef typename std::vector<T>::const_iterator vectorIter;
@@ -62,6 +72,13 @@ public:
         return false;
     }
 
+    /**
+     * Replaces an element T in a vector if its present
+     * @tparam T
+     * @param vector
+     * @param element
+     * @param secondElement
+     */
     template<typename T>
     static void replace(std::vector<T>& vector, const T& element, const T& secondElement) {
         typedef typename std::vector<T>::iterator vectorIter;
@@ -71,6 +88,12 @@ public:
             }
         }
     }
+    /**
+     * Will read all the lights from an .ini file and return them collected in a vector of lights
+     * @param config
+     * @return
+     */
+    static vector<Light*> getLights(const ini::Configuration& config);
 
 
 

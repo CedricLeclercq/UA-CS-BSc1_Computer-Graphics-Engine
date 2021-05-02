@@ -1,6 +1,4 @@
 #include "Lines/Line2D.h"
-#include "Figure/Figure.cpp"
-#include "ExtraFeatures/ZBuffer.cpp"
 #include "Utilities/Utils.h"
 
 #include <iostream>

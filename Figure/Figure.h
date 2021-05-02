@@ -5,9 +5,8 @@
 #ifndef ENGINE_FIGURE_H
 #define ENGINE_FIGURE_H
 
-#include "Face.h"
-#include "../Lines/vector3d.h"
-#include "Color.h"
+#include "ExtraAndUtils/Face.h"
+#include "ExtraAndUtils/Color.h"
 #include "../Lines/Point2D.h"
 #include <list>
 
@@ -19,14 +18,26 @@ public:
     std::vector<Vector3D*> points; // All points of a figure
     std::vector<Face*> faces; // All faces of a figure
     Color color{}; // The color of a figure
-    Class figureClass; // enum class the figure is
+    Color ambientReflection{};
+    Color diffuseReflection{};
+    Color specularReflection{};
+    Color reflectionCoefficient{};
+    Class figureClass{}; // enum class the figure is
 
+    // Constructors
+    /**
+     * \brief Default constructor
+     */
     Figure()= default;
 
+    /**
+     * Copy constructor
+     * @param figure    Figure to copy
+     */
     explicit Figure(Figure * figure);
 
 
-    // All functions that draw a figure
+    // Drawing figures
     /**
      * Draws a figure: Cube
      */
@@ -75,37 +86,64 @@ public:
     void drawTorus(double r, double R, int n, int m);
 
 
-    /*
-    // Scaling and translating and eye
-    void scaleTranslateEye(const Vector3D& centerVector, const Vector3D& eye, double scale, double rotateX, double rotateY, double rotateZ);
-
-    // Matrices
-    Point2D doProjection(const Vector3D * point, double d);
-    Matrix eyePointTrans(const Vector3D &eyepoint);
-    void toPolar(const Vector3D &point, double &theta, double &phi, double &r);
-    void applyTransformation(Figure & figure, const Matrix & matrix);
-    Matrix translate(const Vector3D & vector);
-    Matrix rotateZ ( double angle );
-    Matrix rotateY ( double angle );
-    Matrix rotateX ( double angle );
-    Matrix scalefigure( double scale );
+    // zBuffering
+    /**
+     * \brief Will triangulate one face
+     * @param face
      */
-
-    // Copy constructor
-
-
-
-    // Utils
-    void triangulate(const Face * face);
+    __attribute__((unused)) void triangulate(const Face * face);
+    /**
+     * \brief Will triangulate all faces of this figure object
+     */
     void triangulateAll();
 
-    // Fractals
+
+    // fractals
+    /**
+     * \brief Main function for generating fractals
+     * @param nr_iterations     Indicates the amount of iterations
+     * @param scale             Indicates how much smaller the fractals get each iteration
+     * @return
+     */
     vector<Figure*> fractals(int nr_iterations, double scale);
-    void identifyAndDraw(enum Class figure);
+    /**
+     * \brief Identifies a figure's type and draws that type on the figure object
+     * @param figure
+     */
+    __attribute__((unused)) void identifyAndDraw(enum Class figure);
+    /**
+     * \brief Function that will actually make fractals from a figure. This function is being used each time in the recursive
+     * chain
+     * @param scale
+     * @return
+     */
     vector<Figure *> generateFractals(double scale);
-    vector<Figure *> recursiveFractalsGeneration(const vector<Figure *> &allFractals, int nr_iterations, const double scale);
+    /**
+     * \brief Recursive function that will create fractals for each iteration
+     * @param allFractals
+     * @param nr_iterations
+     * @param scale
+     * @return
+     */
+    vector<Figure *> recursiveFractalsGeneration(const vector<Figure *> &allFractals, int nr_iterations, double scale);
 
     // View Frustum
+    /**
+     * \brief Main function for clipping, calculates most variables and calls the clipSide function
+     * @param viewDir
+     * @param dNear
+     * @param dFar
+     * @param hFov
+     * @param aspectRatio
+     */
+     // TODO maybe move the clipping function to its own .h file and give the vector with all the figures with this function.
+     // TODO then create a loop over all those figure after everything is calculated and then do the clipping
+    void clipping(const vector<double>& viewDir, double dNear, double dFar, double hFov, double aspectRatio);
+    /**
+     * Will clip all
+     * @param dNear
+     */
+    void clipSide(double T);
 
 
 };

@@ -4,6 +4,7 @@
 
 #ifndef README_MD_FIGUREUTILS_H
 #define README_MD_FIGUREUTILS_H
+class Figure;
 
 class FigureUtils {
 public:

@@ -3,6 +3,12 @@
 //
 
 #include "Utils.h"
+#include "../Figure/Figure.h"
+#include "../ExtraFeatures/Lsystems//l_parser.h"
+#include "../ExtraFeatures/Lsystems/LSystemUtils.h"
+#include "../Figure/ExtraAndUtils/FigureUtils.h"
+#include "../ExtraFeatures/InfPointLight.h"
+
 
 inline int roundToInt(double d) { return static_cast<int>(round(d)); }
 
@@ -26,7 +32,8 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
         /*
          * Reading a Wireframe
          */
-    else if (typeString == "Wireframe" or typeString == "ZBufferedWireframe" or typeString == "ZBuffering") {
+    else if (typeString == "Wireframe" or typeString == "ZBufferedWireframe" or typeString == "ZBuffering"
+           or typeString == "LightedZBuffering") {
         Lines2D lines2D;
 
         int nrFigures = configuration["General"]["nrFigures"].as_int_or_die();
@@ -34,13 +41,17 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
         string figureName;
 
         vector<Figure*> allFigures;
+        vector<Light*> allLights = Utils::getLights(configuration);
+
+
+        // TODO read all lights
 
         while (figureIterator < nrFigures) {
 
 
             // Getting all the data for this figure
             figureName = "Figure" + to_string(figureIterator);
-            vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
+            vector<double> color = configuration[figureName]["color"].as_double_tuple_or_default({1,1,1});
             vector<double> center = configuration[figureName]["center"].as_double_tuple_or_die();
             Vector3D centerVector;
             //centerVector.x = 0; centerVector.y = 0; centerVector.z = 0;
@@ -274,7 +285,7 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             string type = configuration[figureName]["type"].as_string_or_die();
             if (type != "FractalCube" and type != "FractalTetrahedron" and type != "FractalOctahedron" and type != "FractalIcosahedron" and type != "FractalDodecahedron") {
                 FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ); // TODO in de if hier onder of gewoon hier laten?
-                if (typeString != "ZBuffering") {
+                if (typeString != "ZBuffering" and typeString != "LightedZBuffering") {
                     Utils::convert3D(*figure, lines2D, color);
                 }
             }
@@ -297,7 +308,7 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             }
             figureIterator++;
         }
-        if (typeString == "ZBuffering") {
+        if (typeString == "ZBuffering" or typeString == "LightedZBuffering") {
 
 
             bool clipping = configuration["General"]["clipping"].as_bool_if_exists(clipping);
@@ -347,7 +358,7 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             cout << "d " << d << " dx " << dx << " dy " << dy << endl;
 
 
-            img::EasyImage image(imageX,imageY);
+            img::EasyImage image((unsigned int)imageX,(unsigned int)imageY);
 
             for (auto & figure: allFigures) {
                 figure->triangulateAll();
@@ -356,20 +367,43 @@ img::EasyImage Utils::generate_image(const ini::Configuration &configuration) {
             if (clipping) {
                 vector<double> viewDirection = configuration["General"]["viewDirection"].as_double_tuple_or_die();
                 double dNear = configuration["General"]["dNear"].as_double_or_die();
-                double dFar = configuration["Gerenal"]["dFar"].as_double_or_die();
+                double dFar = configuration["General"]["dFar"].as_double_or_die();
                 double hfov = configuration["General"]["hfov"].as_double_or_die();
                 double aspectRatio = configuration["General"]["aspectRatio"].as_double_or_die();
+                for (auto& figure: allFigures) {
+                    figure->clipping(viewDirection,dNear,dFar,hfov,aspectRatio);
+                }
             }
 
 
 
-            ZBuffer zbuffer(image.get_width(),image.get_height());
+            ZBuffer zBuffer((int)image.get_width(),(int)image.get_height());
+            string standard = "Figure";
+            int it = 0;
             for (const auto& figure: allFigures) {
+                string figureID = standard + to_string(it);
                 for (auto face: figure->faces) {
-                    vector<double> color = configuration[figureName]["color"].as_double_tuple_or_die();
-                    img::Color imgColor(figure->color.red, figure->color.green, figure->color.blue);
-                    image.draw_zbuf_triag(zbuffer,face->point_indexes[0],face->point_indexes[1],face->point_indexes[2],d,dx,dy,imgColor);
+                    vector<double> colorV = configuration[figureID]["color"].as_double_tuple_or_default({1,1,1}); // TODO check if defaults are good
+                    vector<double> ambientV = configuration[figureID]["ambientReflection"].as_double_tuple_or_default(colorV);
+                    vector<double> diffuseV = configuration[figureID]["diffuseReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+                    vector<double> specularV = configuration[figureID]["specularReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+                    double reflectionCo = configuration[figureID]["reflectionCoefficient"].as_double_or_default(1); // TODO idem
+                    figure->ambientReflection.red = ambientV[0] * 255; figure->ambientReflection.green = ambientV[1] * 255; figure->ambientReflection.blue = ambientV[2] * 255;
+                    figure->diffuseReflection.red = diffuseV[0]*255; figure->diffuseReflection.green = diffuseV[1]*255; figure->diffuseReflection.blue = diffuseV[2] * 255;
+                    figure->specularReflection.red = specularV[0]*255; figure->specularReflection.green = specularV[1] *255; figure->specularReflection.blue = specularV[2] * 255;
+                    img::Color ambient(figure->ambientReflection.red, figure->ambientReflection.green, figure->ambientReflection.blue);
+                    img::Color diffuse(figure->diffuseReflection.red,figure->diffuseReflection.green,figure->diffuseReflection.blue);
+                    img::Color specular(figure->specularReflection.red,figure->specularReflection.green,figure->specularReflection.blue);
+                    image.draw_zbuf_triag(zBuffer,
+                                          face->point_indexes[0],
+                                          face->point_indexes[1],
+                                          face->point_indexes[2],
+                                          d,dx,dy,
+                                          ambient,diffuse,specular,
+                                          reflectionCo,
+                                          allLights);
                 }
+                figureID.clear(); it++;
             }
 
             //cout << "made it";
@@ -501,8 +535,36 @@ void Utils::convert3D(Figure &figure, Lines2D &lines2D, vector<double> color) {
         line2D.color.blue = color[2] * 255;
         lines2D.push_back(line2D);
     }
+}
 
-    // TODO add garbage collection after turning the object in 2D
+
+vector<Light *> Utils::getLights(const ini::Configuration &config) {
+    vector<Light*> result;
+    int nrOfLights = config["General"]["nrLights"].as_int_or_default(0); // Getting the amount of lights
+    for (int it = 0; it < nrOfLights; it++) {
+        string lightName = "Light" + to_string(it);
+        bool infty = config[lightName]["infinity"].as_bool_or_default(true); // TODO check this
+        vector<double> ambientLightV = config[lightName]["ambientLight"].as_double_tuple_or_default({1,1,1});
+        vector<double> diffuseLightV = config[lightName]["diffuseLight"].as_double_tuple_or_default({0,0,0});
+        vector<double> specularLightV = config[lightName]["specularLight"].as_double_tuple_or_default({0,0,0});
+        Color ambientLight(ambientLightV[0],ambientLightV[1],ambientLightV[2]);
+        Color diffuseLight(diffuseLightV[0],diffuseLightV[1],diffuseLightV[2]);
+        Color specularLight(specularLightV[0],specularLightV[1],specularLightV[2]);
+        if (not infty) {
+            vector<double> locationV = config[lightName]["location"].as_double_tuple_or_default({1,1,1});
+            Vector3D location;
+            location.x = locationV[0]; location.y = locationV[1]; location.z = locationV[2];
+            auto * newLight = new PointLight(location,1,ambientLight,diffuseLight,specularLight);
+            result.push_back(newLight);
+        } else {
+            vector<double> directionV = config[lightName]["direction"].as_double_tuple_or_default({1,1,1});
+            Vector3D dir;
+            dir.x = directionV[0]; dir.y = directionV[1]; dir.z = directionV[2];
+            auto * newLight = new InfLight(dir,ambientLight,diffuseLight,specularLight);
+            result.push_back(newLight);
+        }
+    }
+    return result;
 }
 
 

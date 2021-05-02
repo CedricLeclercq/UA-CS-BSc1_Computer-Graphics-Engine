@@ -4,7 +4,9 @@
 
 #include "Figure.h"
 #include "../Utilities/Utils.h"
-#include "FigureDrawer.h"
+#include "ExtraAndUtils/FigureDrawer.h"
+#include "../ExtraFeatures/Lsystems//l_parser.h"
+#include "../Figure/ExtraAndUtils/FigureUtils.h"
 
 // Scaling
 
@@ -69,50 +71,11 @@ vector<Figure*> Figure::generateFractals(const double scale) {
 
 vector<Figure*> Figure::fractals(int nr_iterations, const double scale) {
 
-
     return this->recursiveFractalsGeneration({this}, nr_iterations, scale);
 
-    /*
-    vector<Figure*> fractals; // Vector with all the fractals
-
-
-    for (int i = 0; i < nr_iterations; i++) {
-        if (i == 0) {
-            for (auto &point: this->points) {
-                auto * newFractal = new Figure;
-                newFractal->identifyAndDraw(this->figureClass);
-                //newFractal->drawCube();
-                newFractal->applyTransformation(*newFractal,newFractal->scalefigure(1/scale));
-                newFractal->applyTransformation(*newFractal,newFractal->translate(*point));
-                fractals.push_back(newFractal);
-            }
-        } else {
-            vector<Figure*> newFractals;
-            for (auto fractal: fractals) {
-                for (const auto &point: fractal->points) {
-                    auto * newFractal = new Figure;
-                    //newFractal->drawCube();
-                    newFractal->identifyAndDraw(fractal->figureClass);
-                    newFractal->applyTransformation(*newFractal,newFractal->scalefigure(1/scale));
-                    newFractal->applyTransformation(*newFractal,newFractal->translate(*point));
-                    newFractals.push_back(newFractal);
-                }
-            }
-            fractals.clear();
-            for (auto &fractal: newFractals) {
-                fractals.push_back(fractal);
-            } newFractals.clear();
-
-            //fractals = newFractals;
-        }
-    }
-
-
-     return fractals;
-     */
 }
 // enum Class {Cube,Tetrahedron,Octahedron,Dodecahedron,Cone,Cylinder,Sphere,Torus, Icosahedron};
-void Figure::identifyAndDraw(enum Class figure) {
+__attribute__((unused)) void Figure::identifyAndDraw(enum Class figure) {
     if (figure == Cube) {
         this->drawCube();
     } else if (figure == Tetrahedron) {
@@ -129,6 +92,10 @@ void Figure::identifyAndDraw(enum Class figure) {
 Figure::Figure(Figure *figure) {
     this->color = figure->color; // Setting the new color
     this->figureClass = figure->figureClass; // Setting the figure class
+    this->specularReflection = figure->specularReflection;
+    this->ambientReflection = figure->ambientReflection;
+    this->diffuseReflection = figure->diffuseReflection;
+    this->reflectionCoefficient = figure->reflectionCoefficient;
 
     vector<Face*> nFaces = figure->faces;
     vector<Vector3D*> nPoints = figure->points;
@@ -201,7 +168,7 @@ void Figure::drawTorus(double r, double R, int n, int m) {
     FigureDrawer::drawTorus(this,r,R,n,m);
 }
 
-void Figure::triangulate(const Face *face) {
+__attribute__((unused)) void Figure::triangulate(const Face *face) {
     {
         // Variables for accessing the point_indexes
         int i = 1;
@@ -221,7 +188,7 @@ void Figure::triangulate(const Face *face) {
         }
 
         // Doing the triangulation proces
-        while (j < face->point_indexes.size()) {
+        while (j < (int)face->point_indexes.size()) {
             auto * face1 = new Face({face->point_indexes[0], face->point_indexes[i],face->point_indexes[j]});
             newFaces.push_back(face1);
             i++;
@@ -235,6 +202,42 @@ void Figure::triangulate(const Face *face) {
         }
     }
 }
+
+void Figure::clipping(const vector<double>& viewDir, double dNear, double dFar, double hFov, double aspectRatio) {
+
+}
+
+void Figure::clipSide(double T) {
+
+    vector<Face*> temp; // Result vector, all faces that are clipped or are untouched will be stored here
+    // Looping over all the triangles (this function assumes triangulation has already been done)
+    for (auto &face: this->faces) {
+        // 1st case - this face falls in the T value - it can keep on existing
+        if (face->point_indexes[0]->z >= T and face->point_indexes[1]->z >= T and face->point_indexes[2]->z >= T) {
+            temp.push_back(face); // This face can stay, push back to results vector
+        }
+        // 2th case - point A and B fall out, point C doesn't - we become a new triangle
+        else if ((face->point_indexes[0]->z < T and face->point_indexes[1]->z < T and face->point_indexes[2]->z >= T)
+             or (face->point_indexes[0]->z < T and face->point_indexes[1]->z >= T and face->point_indexes[2]->z < T)
+             or (face->point_indexes[0]->z >= T and face->point_indexes[1]->z < T and face->point_indexes[2]->z < T)) {
+
+            // TODO case 1.1/1.2 of clipping
+        }
+        // 3th case - point A and B don't fall out, point C does - create a four-pointed figure and triangulate it
+        else if ((face->point_indexes[0]->z < T and face->point_indexes[1]->z >= T and face->point_indexes[2]->z >= T)
+             or (face->point_indexes[0]->z >= T and face->point_indexes[1]->z >= T and face->point_indexes[2]->z < T)
+             or (face->point_indexes[0]->z >= T and face->point_indexes[1]->z < T and face->point_indexes[2]->z >= T)) {
+
+            // TODO case 1.2/1.2 of clipping
+        }
+        // 4th case - the face falls out of the view frustum, just leave it out
+    }
+
+    this->faces = temp; // Setting the new faces with the obsolete ones left out
+}
+
+
+
 
 
 

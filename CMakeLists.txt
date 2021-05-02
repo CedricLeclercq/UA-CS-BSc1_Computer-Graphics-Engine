@@ -17,9 +17,20 @@ set(engine_sources
 		Utilities/easy_image.cc
 	engine.cc
 		Utilities/ini_configuration.cc
-		Lsystems/l_parser.cc
+		ExtraFeatures/Lsystems/l_parser.cc
 		Lines/vector3d.cc
-		Utilities/Utils.cpp Utilities/Utils.h Lsystems/LSystemUtils.cpp Lsystems/LSystemUtils.h ExtraFeatures/ViewFrustum.h Figure/FigureDrawer.h Figure/FigureUtils.h)
+		Utilities/Utils.cpp Utilities/Utils.h
+		ExtraFeatures/Lsystems/LSystemUtils.cpp
+		ExtraFeatures/Lsystems/LSystemUtils.h
+		ExtraFeatures/ViewFrustum.h
+		Figure/ExtraAndUtils/FigureDrawer.h
+		Figure/ExtraAndUtils/FigureUtils.h
+		Figure/Figure.h
+		Figure/Figure.cpp
+		ExtraFeatures/ZBuffer.h
+		ExtraFeatures/Light.h
+		ExtraFeatures/InfPointLight.h
+		)
 
 ############################################################
 # Create an executable
