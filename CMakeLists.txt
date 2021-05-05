@@ -14,7 +14,6 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OWN_GXX_FLAGS} -O3 -pthread")
 # List all sources
 ############################################################
 set(engine_sources
-		Utilities/easy_image.cc
 	engine.cc
 		Utilities/ini_configuration.cc
 		ExtraFeatures/Lsystems/l_parser.cc
@@ -30,7 +29,9 @@ set(engine_sources
 		ExtraFeatures/ZBuffer.h
 		ExtraFeatures/Light.h
 		ExtraFeatures/InfPointLight.h
-		)
+		Image/GenerateImage.h
+		Image/easy_image.cc
+		Image/easy_image.h)
 
 ############################################################
 # Create an executable

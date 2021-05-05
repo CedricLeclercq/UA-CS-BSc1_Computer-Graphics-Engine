@@ -67,10 +67,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils"
+CMAKE_SOURCE_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils"
+CMAKE_BINARY_DIR = "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -134,8 +134,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/local/Cellar/cmake/3.20.0/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -145,9 +145,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/CMakeFiles" "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils//CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/CMakeFiles" "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine//CMakeFiles/progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -269,6 +269,33 @@ Figure/Figure.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Figure/Figure.cpp.s
 .PHONY : Figure/Figure.cpp.s
 
+Image/easy_image.o: Image/easy_image.cc.o
+
+.PHONY : Image/easy_image.o
+
+# target to build an object file
+Image/easy_image.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Image/easy_image.cc.o
+.PHONY : Image/easy_image.cc.o
+
+Image/easy_image.i: Image/easy_image.cc.i
+
+.PHONY : Image/easy_image.i
+
+# target to preprocess a source file
+Image/easy_image.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Image/easy_image.cc.i
+.PHONY : Image/easy_image.cc.i
+
+Image/easy_image.s: Image/easy_image.cc.s
+
+.PHONY : Image/easy_image.s
+
+# target to generate assembly for a file
+Image/easy_image.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Image/easy_image.cc.s
+.PHONY : Image/easy_image.cc.s
+
 Lines/vector3d.o: Lines/vector3d.cc.o
 
 .PHONY : Lines/vector3d.o
@@ -322,33 +349,6 @@ Utilities/Utils.s: Utilities/Utils.cpp.s
 Utilities/Utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/Utils.cpp.s
 .PHONY : Utilities/Utils.cpp.s
-
-Utilities/easy_image.o: Utilities/easy_image.cc.o
-
-.PHONY : Utilities/easy_image.o
-
-# target to build an object file
-Utilities/easy_image.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/easy_image.cc.o
-.PHONY : Utilities/easy_image.cc.o
-
-Utilities/easy_image.i: Utilities/easy_image.cc.i
-
-.PHONY : Utilities/easy_image.i
-
-# target to preprocess a source file
-Utilities/easy_image.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/easy_image.cc.i
-.PHONY : Utilities/easy_image.cc.i
-
-Utilities/easy_image.s: Utilities/easy_image.cc.s
-
-.PHONY : Utilities/easy_image.s
-
-# target to generate assembly for a file
-Utilities/easy_image.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Utilities/easy_image.cc.s
-.PHONY : Utilities/easy_image.cc.s
 
 Utilities/ini_configuration.o: Utilities/ini_configuration.cc.o
 
@@ -426,15 +426,15 @@ help:
 	@echo "... Figure/Figure.o"
 	@echo "... Figure/Figure.i"
 	@echo "... Figure/Figure.s"
+	@echo "... Image/easy_image.o"
+	@echo "... Image/easy_image.i"
+	@echo "... Image/easy_image.s"
 	@echo "... Lines/vector3d.o"
 	@echo "... Lines/vector3d.i"
 	@echo "... Lines/vector3d.s"
 	@echo "... Utilities/Utils.o"
 	@echo "... Utilities/Utils.i"
 	@echo "... Utilities/Utils.s"
-	@echo "... Utilities/easy_image.o"
-	@echo "... Utilities/easy_image.i"
-	@echo "... Utilities/easy_image.s"
 	@echo "... Utilities/ini_configuration.o"
 	@echo "... Utilities/ini_configuration.i"
 	@echo "... Utilities/ini_configuration.s"

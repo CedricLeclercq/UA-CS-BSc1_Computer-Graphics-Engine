@@ -2,8 +2,8 @@
 // Created by Cédric Leclercq on 30/04/2021.
 //
 
-#ifndef README_MD_LIGHT_H
-#define README_MD_LIGHT_H
+#ifndef ENGINE_LIGHT_H
+#define ENGINE_LIGHT_H
 #include "../Figure/ExtraAndUtils/Color.h"
 enum LightClass {Infinity, Point};
 
@@ -23,4 +23,4 @@ public:
 
 typedef std::vector<Light*> Lights3D; // Vector with light pointers
 
-#endif //README_MD_LIGHT_H
+#endif // ENGINE_LIGHT_H

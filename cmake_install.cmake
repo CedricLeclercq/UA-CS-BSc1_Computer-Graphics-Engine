@@ -1,4 +1,4 @@
-# Install script for directory: /Users/cedricleclercq/Documents/School/cg/2. Engine/utils
+# Install script for directory: /Users/cedricleclercq/Documents/School/cg/2. Engine/engine
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,18 +39,18 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/engine")
+   "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/engine")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils" TYPE EXECUTABLE FILES "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/engine")
-  if(EXISTS "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/engine" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/engine")
+file(INSTALL DESTINATION "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine" TYPE EXECUTABLE FILES "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/engine")
+  if(EXISTS "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/engine" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/engine")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/engine")
+      execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/engine")
     endif()
   endif()
 endif()
@@ -63,5 +63,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/cedricleclercq/Documents/School/cg/2. Engine/utils/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/cedricleclercq/Documents/School/cg/2. Engine/engine/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

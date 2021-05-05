@@ -1,5 +1,6 @@
 #include "Lines/Line2D.h"
 #include "Utilities/Utils.h"
+#include "Image/GenerateImage.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -8,6 +9,7 @@
 #include <cmath>
 #include <utility>
 #include <chrono>
+
 
 using namespace std;
 using Lines2D = std::list<Line2D>;
@@ -39,7 +41,7 @@ int main(int argc, char const* argv[])
                         }
 
                         auto start = std::chrono::high_resolution_clock::now();
-                        img::EasyImage image = Utils::generate_image(conf);
+                        img::EasyImage image = GenerateImage::generate_image(conf);
                         auto end = std::chrono::high_resolution_clock::now();
                         auto time_taken = end-start;
                         cout << "Time taken: " << time_taken/std::chrono::milliseconds(1) << endl;

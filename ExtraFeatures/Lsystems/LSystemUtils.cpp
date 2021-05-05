@@ -3,8 +3,9 @@
 //
 
 #include "LSystemUtils.h"
-#include "../../Utilities/easy_image.h"
+#include "../../Image/easy_image.h"
 #include "../../Utilities/Utils.h"
+#include <stack>
 
 inline int roundToInt(double d) { return static_cast<int>(round(d)); }
 

@@ -2,8 +2,8 @@
 // Created by Cédric Leclercq on 28/03/2021.
 //
 
-#ifndef README_MD_ZBUFFER_H
-#define README_MD_ZBUFFER_H
+#ifndef ENGINE_ZBUFFER_H
+#define ENGINE_ZBUFFER_H
 #include <limits>
 #include <vector>
 
@@ -28,4 +28,4 @@ public:
 };
 
 
-#endif //README_MD_ZBUFFER_H
+#endif // ENGINE_ZBUFFER_H

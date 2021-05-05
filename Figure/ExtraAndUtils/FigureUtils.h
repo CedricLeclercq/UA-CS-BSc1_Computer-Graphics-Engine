@@ -99,10 +99,13 @@ public:
     }
 
     static void applyTransformation(Figure & figure, const Matrix & matrix) {
-
         for (auto & point: figure.points) {
             *point = *point * matrix;
         }
+    }
+
+    static void applyTransformationVector3D(Vector3D & point, const Matrix & matrix) {
+        point = point * matrix;
     }
 
     static Matrix eyePointTrans(const Vector3D &eyepoint) {

@@ -272,9 +272,9 @@ namespace img
                                  double d,
                                  double dx,
                                  double dy,
-                                 const Color& ambientLight,
-                                 const Color& diffuseReflection,
-                                 const Color& specularReflection,
+                                 const vector<double>& ambientLight,
+                                 const vector<double>& diffuseReflection,
+                                 const vector<double>& specularReflection,
                                  const double reflectionCo,
                                  Lights3D& lights);
 

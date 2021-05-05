@@ -8,7 +8,7 @@
 #include "iostream"
 #include "fstream"
 #include "l_parser.h"
-#include "../../Utilities/easy_image.h"
+#include "../../Image/easy_image.h"
 
 using namespace std;
 

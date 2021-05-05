@@ -2,8 +2,8 @@
 // Created by Cédric Leclercq on 30/04/2021.
 //
 
-#ifndef README_MD_INFPOINTLIGHT_H
-#define README_MD_INFPOINTLIGHT_H
+#ifndef ENGINE_INFPOINTLIGHT_H
+#define ENGINE_INFPOINTLIGHT_H
 #include "../Lines/vector3d.h"
 #include "Light.h"
 
@@ -58,4 +58,4 @@ public:
     }
 };
 
-#endif //README_MD_INFPOINTLIGHT_H
+#endif //ENGINE_INFPOINTLIGHT_H

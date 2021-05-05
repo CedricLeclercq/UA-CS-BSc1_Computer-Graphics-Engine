@@ -6,7 +6,7 @@
 #define README_MD_UTILS_H
 
 class Figure;
-#include "../Utilities/easy_image.h"
+#include "../Image/easy_image.h"
 #include "ini_configuration.h"
 
 
