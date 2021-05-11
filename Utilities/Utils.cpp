@@ -148,9 +148,10 @@ vector<Light *> Utils::getLights(const ini::Configuration &config) {
         Color specularLight(specularLightV[0],specularLightV[1],specularLightV[2]);
         if (not infty) {
             vector<double> locationV = config[lightName]["location"].as_double_tuple_or_default({1,1,1});
-            Vector3D location = Vector3D::vector(locationV[0],locationV[1],locationV[2]);
+            Vector3D location = Vector3D::point(locationV[0],locationV[1],locationV[2]);
             FigureUtils::applyTransformationVector3D(location, FigureUtils::eyePointTrans(eye3D));
-            auto * newLight = new PointLight(location,1,ambientLight,diffuseLight,specularLight);
+            double spotAngle = config[lightName]["spotAngle"].as_double_or_default(90);
+            auto * newLight = new PointLight(location,spotAngle * M_PI/180,ambientLight,diffuseLight,specularLight);
             result.push_back(newLight);
         } else {
             vector<double> directionV = config[lightName]["direction"].as_double_tuple_or_default({1,1,1});

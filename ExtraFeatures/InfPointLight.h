@@ -35,6 +35,12 @@ class PointLight: public Light {
 public:
     Vector3D location; // Location of the light source
     double spotAngle{}; // Angle of the light source
+    ZBuffer shadowMask;
+    Matrix eye;
+    double d;
+    double dx;
+    double dy;
+
 
     /**
      * \brief Default constructor

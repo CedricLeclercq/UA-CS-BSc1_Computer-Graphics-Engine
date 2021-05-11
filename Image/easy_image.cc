@@ -371,7 +371,7 @@ void img::EasyImage::draw_zbuf_line(ZBuffer & zBuffer, double x0, double y0, dou
 void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector3D const * B,Vector3D const * C,
                                      double d,double dx,double dy,const vector<double>& ambientLightReflection,
                                      const vector<double>& diffuseReflection,const vector<double>& specularReflection, const double reflectionCo,
-                                     Lights3D& lights) {
+                                     Lights3D& lights, bool shadowEnabled, double shadowMask) {
 
     // Some assertions apply
     assert(A->x < this->width && A->y < this->height);
@@ -400,11 +400,17 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector
     auto z = u.x * v.y - u.y * v.x;
     Vector3D w = Vector3D::vector(x,y,z);
 
-    //Color finalColor(1,1,1); // Final color a pixel will get
     vector<double> finalColor = {0,0,0};
+
+    if (lights.empty()) {
+        finalColor[0] = ambientLightReflection[0];
+        finalColor[1] = ambientLightReflection[1];
+        finalColor[2] = ambientLightReflection[2];
+    }
 
     // Applying light
     for (auto &light: lights) {
+        // Ambient light should always be applied, regardless of the shadow state
         // Applying ambient light
         finalColor[0] += light->ambientLight.red * ambientLightReflection[0]; // ... to red
         finalColor[1] += light->ambientLight.green * ambientLightReflection[1]; // ... to green
@@ -430,14 +436,19 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector
                 finalColor[2] +=  inftyLight->diffuseLight.blue * diffuseReflection[2] * cosAlpha; // ... to blue
             }
 
-            // Now applying specular light
-            double cosBeta = 3; // TODO calculate, how?
-            double cosBetaMS = pow(cosBeta,reflectionCo); // Doing the cosine of beta to the power of M_s
-            if (cosBetaMS > 0) {
-                finalColor[0] += inftyLight->specularLight.red * specularReflection[0] * cosBetaMS;
-                finalColor[1] += inftyLight->specularLight.green * specularReflection[1] * cosBetaMS;
-                finalColor[2] += inftyLight->specularLight.blue * specularReflection[2] * cosBetaMS;
-            }
+                // Now applying specular light
+            // Defining vector r
+            Vector3D r = Vector3D::vector(2 * cosAlpha * n.x - l.x,
+                                          2 * cosAlpha * n.y - l.y,
+                                          2 * cosAlpha * n.z - l.z);
+
+            //double cosBeta = 3; // TODO victor's idea for infty specular points
+            //double cosBetaMS = pow(cosBeta,reflectionCo); // Doing the cosine of beta to the power of M_s
+            //if (cosBetaMS > 0) {
+                //finalColor[0] += inftyLight->specularLight.red * specularReflection[0] * cosBetaMS;
+                //finalColor[1] += inftyLight->specularLight.green * specularReflection[1] * cosBetaMS;
+                //finalColor[2] += inftyLight->specularLight.blue * specularReflection[2] * cosBetaMS;
+            //} // TODO turn this on again
 
 
         }  // If the light is not a point or infinity, leave it out, this light came into this engine ILLEGALLY
@@ -461,24 +472,20 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector
             Xl_AB = Xi;
             Xr_AB = Xi;
         }
-
         if ((y - projectedB.y)*(y - projectedC.y) <= 0 and projectedB.y != projectedC.y) {
             // BC
             double Xi = (projectedC.x + (projectedB.x - projectedC.x) * ((double)y - projectedC.y)/(projectedB.y - projectedC.y));
             Xl_BC = Xi;
             Xr_BC = Xi;
         }
-
         if ((y - projectedA.y)*(y - projectedC.y) <= 0 and projectedA.y != projectedC.y) {
             // AC
             double Xi = (projectedC.x + (projectedA.x - projectedC.x) * ((double)y - projectedC.y)/(projectedA.y - projectedC.y));
             Xl_AC = Xi;
             Xr_AC = Xi;
         }
-
         int Xl = roundToInt(min(Xl_AB,min(Xl_AC,Xl_BC)) + 0.5);
         int Xr = roundToInt(max(Xr_AB,max(Xr_AC,Xr_BC)) - 0.5);
-
         if (Xl >= 0 and Xr >= 0) {
             for (int x = Xl; x < Xr + 1; x++) {
                 double oneOverZ = 1.0001 * oneOverZg + ((double) x - Xg) * DzDx + ((double) y - Yg) * DzDy;
@@ -486,42 +493,105 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector
                     zBuffer[x][y] = oneOverZ;
                     vector<double> saveColor = finalColor;
                     // Adjusting color for point lights
-                    // TODO spots?
-                    for (auto &light: lights) {
-                        if (light->lightClass == Point) {
-                            auto * pointLight = static_cast<PointLight*>(light);
-                            Vector3D location = pointLight->location;
-                            Vector3D n = Vector3D::normalise(w);
-                            location.x = - location.x; location.y = - location.y; location.z = - location.z;
-                            auto lX = ((x-dx) * - (1/oneOverZ))/d;
-                            auto lY = ((y-dy) * - (1/oneOverZ))/d;
-                            auto lZ = 1/oneOverZ;
-                            location = Vector3D::normalise(location);
-                            location.x = location.x * n.x;
-                            location.y = location.y * n.y;
-                            location.z = location.z * n.z;
-                            Vector3D lOld = Vector3D::vector(lX,lY,lZ);
-                            Vector3D l = Vector3D::normalise(lOld);
-                            //Vector3D l = lOld;
-                            // TODO normalise vector
-                            double cosAlpha = location.x * l.x + location.y * l.y + location.z * l.z;
-                            if (cosAlpha > 0) {
-                                finalColor[0] += pointLight->diffuseLight.red * diffuseReflection[0] * cosAlpha;
-                                finalColor[1] += pointLight->diffuseLight.green * diffuseReflection[1] * cosAlpha;
-                                finalColor[2] += pointLight->diffuseLight.blue * diffuseReflection[2] * cosAlpha;
-                            }
+                        for (auto &light: lights) {
+                            if (light->lightClass == Point) {
+                                auto *pointLight = static_cast<PointLight*>(light);
+                                auto lX = ((x - dx) * -(1 / oneOverZ)) / d;
+                                auto lY = ((y - dy) * -(1 / oneOverZ)) / d;
+                                auto lZ = 1 / oneOverZ;
+                                Vector3D ld = Vector3D::vector(pointLight->location.x,pointLight->location.y,pointLight->location.z);
+                                ld.x -= lX;
+                                ld.y -= lY;
+                                ld.z -= lZ;
+                                ld = Vector3D::normalise(ld);
+                                Vector3D n = Vector3D::normalise(w);
+                                double cosAlpha = ld.x * n.x + ld.y * n.y + ld.z * n.z;
+                                if (cosAlpha > 0 and cosAlpha > cos(pointLight->spotAngle)) {
+                                    //double final = (1 - (1 - cosAlpha) / (1 - cos(pointLight->spotAngle)));
+                                    double final = (cosAlpha - cos(pointLight->spotAngle))/(1-cos(pointLight->spotAngle));
+                                    finalColor[0] += pointLight->diffuseLight.red * diffuseReflection[0] * final;
+                                    finalColor[1] += pointLight->diffuseLight.green * diffuseReflection[1] * final;
+                                    finalColor[2] += pointLight->diffuseLight.blue * diffuseReflection[2] * final;
+                                }
+                                Vector3D rOld = Vector3D::vector(2 * cosAlpha * n.x - ld.x,
+                                                                 2 * cosAlpha * n.y - ld.y,
+                                                                 2 * cosAlpha * n.z - ld.z);
+                                Vector3D r = Vector3D::normalise(rOld);
+                                Vector3D m = Vector3D::vector(-lX,-lY,-lZ);
+                                m = Vector3D::normalise(m);
+                                double cosBeta = r.x * m.x + r.y * m.y + r.z * m.z;
+                                // Doing the cosine of beta to the power of M_s
+                                double cosBetaMS = pow(cosBeta,reflectionCo);
+                                if (cosBeta > 0) {
+                                    finalColor[0] += pointLight->specularLight.red * specularReflection[0] * cosBetaMS;
+                                    finalColor[1] += pointLight->specularLight.green * specularReflection[1] * cosBetaMS;
+                                    finalColor[2] += pointLight->specularLight.blue * specularReflection[2] * cosBetaMS;
+                                }
 
-                            // Now applying specular light
-                            double cosBeta = 3; // TODO calculate, how?
-                            double cosBetaMS = pow(cosBeta,reflectionCo); // Doing the cosine of beta to the power of M_s
-                            if (cosBetaMS > 0) {
-                                finalColor[0] += pointLight->specularLight.red * specularReflection[0] * cosBetaMS;
-                                finalColor[1] += pointLight->specularLight.green * specularReflection[1] * cosBetaMS;
-                                finalColor[2] += pointLight->specularLight.blue * specularReflection[2] * cosBetaMS;
                             }
+                            // This part in comments below was my old code, this was all a mess so I rewrote the code above
+                            /*
+                            if (light->lightClass == Point) {
+                                auto *pointLight = static_cast<PointLight *>(light);
+                                Vector3D location = pointLight->location;
+                                Vector3D n = Vector3D::normalise(w);
+                                location.x = -location.x;
+                                location.y = -location.y;
+                                location.z = -location.z;
+                                auto lX = ((x - dx) * -(1 / oneOverZ)) / d;
+                                auto lY = ((y - dy) * -(1 / oneOverZ)) / d;
+                                auto lZ = 1 / oneOverZ;
+                                location = Vector3D::normalise(location);
+                                location = Vector3D::cross(location, n);
+                                //location.x = location.x * n.x;
+                                //location.y = location.y * n.y;
+                                //location.z = location.z * n.z;
+                                Vector3D lOld = Vector3D::vector(lX, lY, lZ);
+                                Vector3D l = Vector3D::normalise(lOld);
+                                //Vector3D l = lOld;
+                                double cosAlpha = location.x * l.x + location.y * l.y + location.z * l.z;
+                                if (cosAlpha > 0) {
+                                    finalColor[0] += pointLight->diffuseLight.red * diffuseReflection[0] * cosAlpha;
+                                    finalColor[1] += pointLight->diffuseLight.green * diffuseReflection[1] * cosAlpha;
+                                    finalColor[2] += pointLight->diffuseLight.blue * diffuseReflection[2] * cosAlpha;
+                                }
+
+                                //else if (cosAlpha > 0 and pointLight->spotAngle != 0) {
+                                  //  finalColor[0] += pointLight->diffuseLight.red * diffuseReflection[0]
+                                    //                 * (1 -
+                                      //                  (1 - cosAlpha) / (1 - cos(pointLight->spotAngle * M_PI / 180)));
+                                    //finalColor[1] += pointLight->diffuseLight.green * diffuseReflection[1]
+                                      //               * (1 -
+                                      //                  (1 - cosAlpha) / (1 - cos(pointLight->spotAngle * M_PI / 180)));
+                                    //finalColor[2] += pointLight->diffuseLight.blue * diffuseReflection[2]
+                                      //               * (1 -
+                                        //                (1 - cosAlpha) / (1 - cos(pointLight->spotAngle * M_PI / 180)));
+                                //}
+
+                                // Defining vector r
+                                Vector3D rOld = Vector3D::vector(2 * cosAlpha * n.x - l.x,
+                                                                 2 * cosAlpha * n.y - l.y,
+                                                                 2 * cosAlpha * n.z - l.z);
+
+                                Vector3D r = Vector3D::normalise(rOld);
+                                // Defining vector m
+                                //Vector3D m = Vector3D::normalise(Vector3D::vector(lX, lY, lZ)); // TODO calculate, how?
+                                Vector3D m = Vector3D::vector(0,0,0);
+                                // Now applying specular light
+                                double cosBeta = r.x * m.x + r.y * m.y + r.z * m.z;
+                                double cosBetaMS = pow(cosBeta,
+                                                       reflectionCo); // Doing the cosine of beta to the power of M_s
+                                if (cosBetaMS > 0) {
+                                    // TODO turn on again
+                                    //finalColor[0] += pointLight->specularLight.red * specularReflection[0] * cosBetaMS;
+                                    //finalColor[1] +=
+                                            //pointLight->specularLight.green * specularReflection[1] * cosBetaMS;
+                                    //finalColor[2] += pointLight->specularLight.blue * specularReflection[2] * cosBetaMS;
+                                }
+                            }
+                            */
                         }
-                    }
-                    // Now creating the color we need
+                    // Now creating the color we need - and setting it on this picture
                     (*this)(x, y) = Color(roundToInt(finalColor[0] * 255),
                                           roundToInt(finalColor[1] * 255),
                                           roundToInt(finalColor[2] * 255));

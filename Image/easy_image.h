@@ -275,8 +275,10 @@ namespace img
                                  const vector<double>& ambientLight,
                                  const vector<double>& diffuseReflection,
                                  const vector<double>& specularReflection,
-                                 const double reflectionCo,
-                                 Lights3D& lights);
+                                 double reflectionCo,
+                                 Lights3D& lights,
+                                 bool shadowEnabled,
+                                 double shadowMask);
 
 
     private:

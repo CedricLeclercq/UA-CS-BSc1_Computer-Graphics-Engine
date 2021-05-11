@@ -10,6 +10,7 @@
 
 class ZBuffer: public std::vector<std::vector<double>> {
 public:
+    ZBuffer()=default;
     /**
      * \brief Constructs the ZBuffer. Initialises all the values on +inf
      * \param width     integer for the width of [x][y]
