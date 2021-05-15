@@ -351,7 +351,6 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
 
 
             double xRange = abs(xMax - xMin);
-            cout << xRange << endl;
             double yRange = abs(yMax - yMin);
 
             double imageX = configuration["General"]["size"].as_double_or_die() *(xRange/max(xRange,yRange));

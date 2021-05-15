@@ -58,12 +58,15 @@ vector<Figure*> Figure::generateFractals(const double scale) {
 
     vector<Figure*> fractals; // Vector with all the fractals
 
-    for (auto point: this->points) {
+    for (int i = 0; i < (int)this->points.size(); i++) {
         auto * newFractal = new Figure(this);
         //newFractal->identifyAndDraw(this->figureClass);
         //newFractal->drawCube();
         FigureUtils::applyTransformation(*newFractal,FigureUtils::scalefigure(1/scale));
-        FigureUtils::applyTransformation(*newFractal,FigureUtils::translate(*point));
+        Vector3D pointMixed =  Vector3D::point(this->points[i]->x - newFractal->points[i]->x,
+                                              this->points[i]->y - newFractal->points[i]->y,
+                                              this->points[i]->z - newFractal->points[i]->z);
+        FigureUtils::applyTransformation(*newFractal,FigureUtils::translate(pointMixed));
         fractals.push_back(newFractal);
     }
     return fractals;

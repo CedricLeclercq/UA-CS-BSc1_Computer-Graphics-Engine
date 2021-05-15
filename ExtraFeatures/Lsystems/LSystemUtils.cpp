@@ -39,7 +39,7 @@ string LSystemUtils::recursiveInitiator(const LParser::LSystem2D& sys, const str
         else if (k == '+') { result += '+';}
         else if (k == '(') { result += '(';}
         else { result += ')';}
-    } nrOfIterations -= 1; cout << endl << endl << result << endl << endl;
+    } nrOfIterations -= 1;
 
     if (nrOfIterations != 0) {
         result = recursiveInitiator(sys,result,nrOfIterations);
@@ -60,6 +60,7 @@ img::EasyImage LSystemUtils::LSystem2D(const LParser::LSystem2D&  sys, const vec
 
     //cout << endl << recursiveInitiator(sys,test,sys.get_nr_iterations()) << endl;
     string fullString = LSystemUtils::recursiveInitiator(sys,initiator,sys.get_nr_iterations());
+    cout << fullString; // TODO remove debug string
     double currentX = 0;
     double currentY = 0;
     stack<pair<pair<double,double>,double>> stack; // ((x,y),angle)
