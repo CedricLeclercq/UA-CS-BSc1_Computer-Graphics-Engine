@@ -6,9 +6,9 @@ project(engine)
 # Set compiler flags
 ############################################################
 set(OWN_GXX_FLAGS "-Wall -Wextra -fstack-protector-all -std=c++14")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OWN_GXX_FLAGS} -g -O3 -pthread")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OWN_GXX_FLAGS} -O3 -pthread")
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OWN_GXX_FLAGS} -O3 -pthread")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OWN_GXX_FLAGS} -g -O1 -pthread")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OWN_GXX_FLAGS} -O1 -pthread")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OWN_GXX_FLAGS} -O1 -pthread")
 
 ############################################################
 # List all sources
@@ -31,7 +31,7 @@ set(engine_sources
 		ExtraFeatures/InfPointLight.h
 		Image/GenerateImage.h
 		Image/easy_image.cc
-		Image/easy_image.h)
+		Image/easy_image.h ExtraFeatures/Shadow.h)
 
 ############################################################
 # Create an executable

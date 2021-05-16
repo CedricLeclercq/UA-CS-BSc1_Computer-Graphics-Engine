@@ -100,7 +100,11 @@ Figure::Figure(Figure *figure) {
     this->diffuseReflection = figure->diffuseReflection;
     this->reflectionCoefficient = figure->reflectionCoefficient;
 
-    vector<Face*> nFaces = figure->faces;
+    //vector<Face*> nFaces = figure->faces;
+    vector<Face*> nFaces;
+    for (auto face: figure->faces) {
+        nFaces.push_back(new Face(face->point_indexes));
+    }
     vector<Vector3D*> nPoints = figure->points;
     vector<pair<Vector3D*,Vector3D*>> nLines = figure->lines; // All lines of a figure
 

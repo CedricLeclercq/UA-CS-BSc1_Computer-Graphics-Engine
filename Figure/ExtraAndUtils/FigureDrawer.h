@@ -149,13 +149,12 @@ public:
         figure->faces.push_back(face7);
         figure->faces.push_back(face8);
 
-        for (auto face: figure->faces) {
+        for (auto &face: figure->faces) {
             figure->lines.emplace_back(face->point_indexes[0],face->point_indexes[1]);
             figure->lines.emplace_back(face->point_indexes[1],face->point_indexes[2]);
-            figure->lines.emplace_back(face->point_indexes[2],face->point_indexes[3]);
-            figure->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
+            figure->lines.emplace_back(face->point_indexes[2],face->point_indexes[0]);
+            //figure->lines.emplace_back(face->point_indexes[3],face->point_indexes[0]);
         }
-
     }
     static void drawIcosahedron(Figure * figure) {
         figure->figureClass = Icosahedron;

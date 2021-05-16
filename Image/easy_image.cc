@@ -22,6 +22,7 @@
 #include <iostream>
 #include <list>
 #include "../ExtraFeatures/InfPointLight.h"
+#include "../ExtraFeatures/Shadow.h"
 
 
 

@@ -21,7 +21,7 @@ public:
     Color ambientReflection{};
     Color diffuseReflection{};
     Color specularReflection{};
-    Color reflectionCoefficient{};
+    double reflectionCoefficient{};
     Class figureClass{}; // enum class the figure is
 
     // Constructors

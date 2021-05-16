@@ -120,6 +120,16 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
 
             // The figure that will be written on
             auto * figure = new Figure;
+            // Initiating lights for the figure
+            vector<double> colorV = configuration[figureName]["color"].as_double_tuple_or_default({1,1,1}); // TODO check if defaults are good
+            vector<double> ambientV = configuration[figureName]["ambientReflection"].as_double_tuple_or_default(colorV);
+            vector<double> diffuseV = configuration[figureName]["diffuseReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+            vector<double> specularV = configuration[figureName]["specularReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+            double reflectionCo = configuration[figureName]["reflectionCoefficient"].as_double_or_default(0); // TODO idem
+            figure->ambientReflection.red = ambientV[0] * 255; figure->ambientReflection.green = ambientV[1] * 255; figure->ambientReflection.blue = ambientV[2] * 255;
+            figure->diffuseReflection.red = diffuseV[0] * 255; figure->diffuseReflection.green = diffuseV[1]*255; figure->diffuseReflection.blue = diffuseV[2] * 255;
+            figure->specularReflection.red = specularV[0] * 255; figure->specularReflection.green = specularV[1] *255; figure->specularReflection.blue = specularV[2] * 255;
+            figure->reflectionCoefficient = reflectionCo;
             // Drawing a cube
             if (configuration[figureName]["type"].as_string_or_die() == "Cube") {
                 figure->drawCube();
@@ -146,6 +156,10 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
                     //Utils::addToVector(allFigures, toAddFigures);
+                } else {
+                    allFigures.push_back(figure);
+                    FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                    Utils::convert3D(*figure, lines2D, color);
                 }
             }
 
@@ -175,6 +189,10 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
                     //Utils::addToVector(allFigures, toAddFigures);
+                } else {
+                    allFigures.push_back(figure);
+                    FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                    Utils::convert3D(*figure, lines2D, color);
                 }
 
             }
@@ -205,6 +223,10 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
                     //Utils::addToVector(allFigures, toAddFigures);
+                } else {
+                    allFigures.push_back(figure);
+                    FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                    Utils::convert3D(*figure, lines2D, color);
                 }
             }
 
@@ -234,6 +256,10 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
                     //Utils::addToVector(allFigures, toAddFigures);
+                } else {
+                    allFigures.push_back(figure);
+                    FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                    Utils::convert3D(*figure, lines2D, color);
                 }
             }
 
@@ -263,6 +289,10 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
                     //vector<Figure *> toAddFigures = Utils::filterOutFigure(newFigures, figure);
                     //allFigures = Utils::filterOutFigure(allFigures, figure);
                     //Utils::addToVector(allFigures, toAddFigures);
+                } else {
+                    allFigures.push_back(figure);
+                    FigureUtils::scaleTranslateEye(figure, centerVector,eye3D,scale,rotateX,rotateY,rotateZ);
+                    Utils::convert3D(*figure, lines2D, color);
                 }
             }
 
@@ -385,24 +415,34 @@ img::EasyImage GenerateImage::generate_image(const ini::Configuration &configura
             for (const auto& figure: allFigures) {
                 string figureID = standard + to_string(it);
                 for (auto face: figure->faces) {
-                    vector<double> colorV = configuration[figureID]["color"].as_double_tuple_or_default({1,1,1}); // TODO check if defaults are good
-                    vector<double> ambientV = configuration[figureID]["ambientReflection"].as_double_tuple_or_default(colorV);
-                    vector<double> diffuseV = configuration[figureID]["diffuseReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
-                    vector<double> specularV = configuration[figureID]["specularReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
-                    double reflectionCo = configuration[figureID]["reflectionCoefficient"].as_double_or_default(0); // TODO idem
-                    figure->ambientReflection.red = ambientV[0] * 255; figure->ambientReflection.green = ambientV[1] * 255; figure->ambientReflection.blue = ambientV[2] * 255;
-                    figure->diffuseReflection.red = diffuseV[0] * 255; figure->diffuseReflection.green = diffuseV[1]*255; figure->diffuseReflection.blue = diffuseV[2] * 255;
-                    figure->specularReflection.red = specularV[0] * 255; figure->specularReflection.green = specularV[1] *255; figure->specularReflection.blue = specularV[2] * 255;
+                    //vector<double> colorV = configuration[figureID]["color"].as_double_tuple_or_default({1,1,1}); // TODO check if defaults are good
+                    //vector<double> ambientV = configuration[figureID]["ambientReflection"].as_double_tuple_or_default(colorV);
+                    //vector<double> diffuseV = configuration[figureID]["diffuseReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+                    //vector<double> specularV = configuration[figureID]["specularReflection"].as_double_tuple_or_default({0,0,0}); // TODO idem
+                    //double reflectionCo = configuration[figureID]["reflectionCoefficient"].as_double_or_default(0); // TODO idem
+                    //figure->ambientReflection.red = ambientV[0] * 255; figure->ambientReflection.green = ambientV[1] * 255; figure->ambientReflection.blue = ambientV[2] * 255;
+                    //figure->diffuseReflection.red = diffuseV[0] * 255; figure->diffuseReflection.green = diffuseV[1]*255; figure->diffuseReflection.blue = diffuseV[2] * 255;
+                    //figure->specularReflection.red = specularV[0] * 255; figure->specularReflection.green = specularV[1] *255; figure->specularReflection.blue = specularV[2] * 255;
                     //img::Color ambient(figure->ambientReflection.red, figure->ambientReflection.green, figure->ambientReflection.blue);
                     //img::Color diffuse(figure->diffuseReflection.red,figure->diffuseReflection.green,figure->diffuseReflection.blue);
                     //img::Color specular(figure->specularReflection.red,figure->specularReflection.green,figure->specularReflection.blue);
+                    vector<double> ambientV = {figure->ambientReflection.red / 255,
+                                               figure->ambientReflection.green / 255,
+                                               figure->ambientReflection.blue / 255};
+                    vector<double> diffuseV = {figure->diffuseReflection.red / 255,
+                                               figure->diffuseReflection.green / 255,
+                                               figure->diffuseReflection.blue / 255};
+                    vector<double> specularV = {figure->specularReflection.red / 255,
+                                                figure->specularReflection.green / 255,
+                                                figure->specularReflection.blue / 255};
+
                     image.draw_zbuf_triag(zBuffer,
                                           face->point_indexes[0],
                                           face->point_indexes[1],
                                           face->point_indexes[2],
                                           d,dx,dy,
                                           ambientV,diffuseV,specularV,
-                                          reflectionCo,
+                                          figure->reflectionCoefficient,
                                           allLights,
                                           shadowEnabled,
                                           shadowMask);
