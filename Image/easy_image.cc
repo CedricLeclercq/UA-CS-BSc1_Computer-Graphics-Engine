@@ -519,6 +519,12 @@ void img::EasyImage::draw_zbuf_triag(ZBuffer & zBuffer,Vector3D const * A,Vector
                                     finalColor[0] += pointLight->specularLight.red * specularReflection[0] * cosBetaMS;
                                     finalColor[1] += pointLight->specularLight.green * specularReflection[1] * cosBetaMS;
                                     finalColor[2] += pointLight->specularLight.blue * specularReflection[2] * cosBetaMS;
+                                } if (finalColor[0] > 1) {
+                                    finalColor[0] = 1;
+                                } if (finalColor[1] > 1) {
+                                    finalColor[1] = 1;
+                                } if (finalColor[2] > 1) {
+                                    finalColor[2] = 1;
                                 }
                             }
                         }

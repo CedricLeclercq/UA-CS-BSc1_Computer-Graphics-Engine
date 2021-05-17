@@ -440,7 +440,7 @@ public:
         }
 
 
-        auto * newFace = new Face({firstPoint,previousPoint,topPoint});
+        auto * newFace = new Face({previousPoint,firstPoint,topPoint});
         figure->faces.push_back(newFace);
 
         for (auto face: figure->faces) {
@@ -489,7 +489,7 @@ public:
             //faceBottom->point_indexes.push_back(newPointDown);
         }
 
-        auto * newFace = new Face({previousPointDown,previousPointUp,firstPointUp,firstPointDown});
+        auto * newFace = new Face({firstPointDown,firstPointUp,previousPointUp,previousPointDown});
         auto * upperFace = new Face(upperPoints);
         auto * lowerFace = new Face(downPoints);
         figure->faces.push_back(newFace);
